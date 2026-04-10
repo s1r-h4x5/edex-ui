@@ -2,7 +2,9 @@ window.modals = {};
 
 class Modal {
     constructor(options, onclose) {
-        if (!options || !options.type) throw "Missing parameters";
+        if (!options || !options.type) {
+            throw "Missing parameters";
+        }
 
         this.type = options.type;
         this.id = require("nanoid").nanoid();
@@ -14,53 +16,53 @@ class Modal {
         this.onclose = onclose;
         this.classes = "modal_popup";
         let buttons = [];
-        let augs = [];
+        const augs = [];
         let zindex = 0;
 
         // Reserve a slot in window.modals
         window.modals[this.id] = {};
 
-        switch(this.type) {
+        switch (this.type) {
             case "error":
                 this.classes += " error";
                 zindex = 1500;
-                buttons.push({label:"PANIC", action:"window.modals['"+this.id+"'].close();"}, {label:"RELOAD", action:"window.location.reload(true);"});
+                buttons.push({ label: "PANIC", action: "window.modals['" + this.id + "'].close();" }, { label: "RELOAD", action: "window.location.reload(true);" });
                 augs.push("tr-clip", "bl-rect", "r-clip");
                 break;
             case "warning":
                 this.classes += " warning";
                 zindex = 1000;
-                buttons.push({label:"OK", action:"window.modals['"+this.id+"'].close();"});
+                buttons.push({ label: "OK", action: "window.modals['" + this.id + "'].close();" });
                 augs.push("bl-clip", "tr-clip", "r-rect", "b-rect");
                 break;
             case "custom":
                 this.classes += " info custom";
                 zindex = 500;
                 buttons = options.buttons || [];
-                buttons.push({label:"Close", action:"window.modals['"+this.id+"'].close();"});
+                buttons.push({ label: "Close", action: "window.modals['" + this.id + "'].close();" });
                 augs.push("tr-clip", "bl-clip");
                 break;
             default:
                 this.classes += " info";
                 zindex = 500;
-                buttons.push({label:"OK", action:"window.modals['"+this.id+"'].close();"});
+                buttons.push({ label: "OK", action: "window.modals['" + this.id + "'].close();" });
                 augs.push("tr-clip", "bl-clip");
                 break;
         }
 
-        let DOMstring = `<div id="modal_${this.id}" class="${this.classes}" style="z-index:${zindex+Object.keys(window.modals).length};" augmented-ui="${augs.join(" ")} exe">
+        let DOMstring = `<div id="modal_${this.id}" class="${this.classes}" style="z-index:${zindex + Object.keys(window.modals).length};" augmented-ui="${augs.join(" ")} exe">
             <h1>${this.title}</h1>
-            ${this.type === "custom" ? options.html : "<h5>"+this.message+"</h5>"}
+            ${this.type === "custom" ? options.html : "<h5>" + this.message + "</h5>"}
             <div>`;
-            buttons.forEach(b => {
-                DOMstring += `<button onclick="${b.action}">${b.label}</button>`;
-            });
+        buttons.forEach(b => {
+            DOMstring += `<button onclick="${b.action}">${b.label}</button>`;
+        });
         DOMstring += `</div>
         </div>`;
 
         this.close = () => {
-            let modalElement = document.getElementById("modal_"+this.id);
-            modalElement.setAttribute("class", "modal_popup "+this.type+" blink");
+            const modalElement = document.getElementById("modal_" + this.id);
+            modalElement.setAttribute("class", "modal_popup " + this.type + " blink");
             window.audioManager.denied.play();
             setTimeout(() => {
                 modalElement.remove();
@@ -73,22 +75,24 @@ class Modal {
         };
 
         this.focus = () => {
-            let modalElement = document.getElementById("modal_"+this.id);
-            modalElement.setAttribute("class", this.classes+" focus");
+            const modalElement = document.getElementById("modal_" + this.id);
+            modalElement.setAttribute("class", this.classes + " focus");
             Object.keys(window.modals).forEach(id => {
-                if (id === this.id) return;
+                if (id === this.id) {
+                    return;
+                }
                 window.modals[id].unfocus();
             });
         };
 
         this.unfocus = () => {
-            let modalElement = document.getElementById("modal_"+this.id);
+            const modalElement = document.getElementById("modal_" + this.id);
             modalElement.setAttribute("class", this.classes);
         };
 
-        let tmp = document.createElement("div");
+        const tmp = document.createElement("div");
         tmp.innerHTML = DOMstring;
-        let element = tmp.firstChild;
+        const element = tmp.firstChild;
 
         element.addEventListener("mousedown", () => {
             this.focus();
@@ -97,7 +101,7 @@ class Modal {
             this.focus();
         });
 
-        switch(this.type) {
+        switch (this.type) {
             case "error":
                 window.audioManager.error.play();
                 break;
@@ -113,14 +117,14 @@ class Modal {
         this.focus();
 
         // Allow dragging the modal around
-        let draggedModal = document.getElementById(`modal_${this.id}`);
-        let dragTarget = document.querySelector(`div#modal_${this.id} > h1:first-child`);
+        const draggedModal = document.getElementById(`modal_${this.id}`);
+        const dragTarget = document.querySelector(`div#modal_${this.id} > h1:first-child`);
 
         draggedModal.zindex = draggedModal.getAttribute("style");
 
         // Wait for correct rendering of medias and such before calculating rect size
         setTimeout(() => {
-            let rect = draggedModal.getBoundingClientRect();
+            const rect = draggedModal.getBoundingClientRect();
             draggedModal.posX = rect.left;
             draggedModal.posY = rect.top;
         }, 500);

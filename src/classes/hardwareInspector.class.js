@@ -1,6 +1,8 @@
 class HardwareInspector {
     constructor(parentId) {
-        if (!parentId) throw "Missing parameters";
+        if (!parentId) {
+            throw "Missing parameters";
+        }
 
         // Create DOM
         this.parent = document.getElementById(parentId);
@@ -39,7 +41,9 @@ class HardwareInspector {
     }
     _trimDataString(str, ...filters) {
         return str.trim().split(" ").filter(word => {
-            if (typeof filters !== "object") return true;
+            if (typeof filters !== "object") {
+                return true;
+            }
 
             return !filters.includes(word);
         }).slice(0, 2).join(" ");

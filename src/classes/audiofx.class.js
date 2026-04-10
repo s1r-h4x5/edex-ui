@@ -1,10 +1,10 @@
 class AudioManager {
     constructor() {
         const path = require("path");
-        const {Howl, Howler} = require("howler");
+        const { Howl, Howler } = require("howler");
 
         if (window.settings.audio === true) {
-            if(window.settings.disableFeedbackAudio === false) {
+            if (window.settings.disableFeedbackAudio === false) {
                 this.stdout = new Howl({
                     src: [path.join(__dirname, "assets", "audio", "stdout.wav")],
                     volume: 0.4
@@ -60,8 +60,10 @@ class AudioManager {
                     return target[sound];
                 } else {
                     return {
-                        play: () => {return true;}
-                    }
+                        play: () => {
+                            return true;
+                        }
+                    };
                 }
             }
         });

@@ -25,21 +25,27 @@ class FilesystemDisplay {
      * @throws {Error} Missing parentId option
      */
     constructor(opts) {
-        if (!opts.parentId) throw "Missing options";
+        if (!opts.parentId) {
+            throw "Missing options";
+        }
 
         const fs = require("fs");
         const path = require("path");
         this.cwd = [];
         this.cwd_path = null;
         this.iconcolor = `rgb(${window.theme.r}, ${window.theme.g}, ${window.theme.b})`;
-        this._formatBytes = (a,b) => {if(0==a)return"0 Bytes";var c=1024,d=b||2,e=["Bytes","KB","MB","GB","TB","PB","EB","ZB","YB"],f=Math.floor(Math.log(a)/Math.log(c));return parseFloat((a/Math.pow(c,f)).toFixed(d))+" "+e[f]};
+        this._formatBytes = (a,b) => {
+            if (0 == a) {
+                return "0 Bytes";
+            } const c = 1024,d = b || 2,e = ["Bytes","KB","MB","GB","TB","PB","EB","ZB","YB"],f = Math.floor(Math.log(a) / Math.log(c));return parseFloat((a / Math.pow(c,f)).toFixed(d)) + " " + e[f];
+        };
         this.fileIconsMatcher = require("./assets/misc/file-icons-match.js");
         this.icons = require("./assets/icons/file-icons.json");
         this.edexIcons = {
             theme: {
                 width: 24,
                 height: 24,
-                svg: '<path d="M 17.9994,3.99805L 17.9994,2.99805C 17.9994,2.44604 17.5514,1.99805 16.9994,1.99805L 4.9994,1.99805C 4.4474,1.99805 3.9994,2.44604 3.9994,2.99805L 3.9994,6.99805C 3.9994,7.55005 4.4474,7.99805 4.9994,7.99805L 16.9994,7.99805C 17.5514,7.99805 17.9994,7.55005 17.9994,6.99805L 17.9994,5.99805L 18.9994,5.99805L 18.9994,9.99805L 8.9994,9.99805L 8.9994,20.998C 8.9994,21.55 9.4474,21.998 9.9994,21.998L 11.9994,21.998C 12.5514,21.998 12.9994,21.55 12.9994,20.998L 12.9994,11.998L 20.9994,11.998L 20.9994,3.99805L 17.9994,3.99805 Z"/>'
+                svg: "<path d=\"M 17.9994,3.99805L 17.9994,2.99805C 17.9994,2.44604 17.5514,1.99805 16.9994,1.99805L 4.9994,1.99805C 4.4474,1.99805 3.9994,2.44604 3.9994,2.99805L 3.9994,6.99805C 3.9994,7.55005 4.4474,7.99805 4.9994,7.99805L 16.9994,7.99805C 17.5514,7.99805 17.9994,7.55005 17.9994,6.99805L 17.9994,5.99805L 18.9994,5.99805L 18.9994,9.99805L 8.9994,9.99805L 8.9994,20.998C 8.9994,21.55 9.4474,21.998 9.9994,21.998L 11.9994,21.998C 12.5514,21.998 12.9994,21.55 12.9994,20.998L 12.9994,11.998L 20.9994,11.998L 20.9994,3.99805L 17.9994,3.99805 Z\"/>"
             },
             themesDir: {
                 width: 24,
@@ -49,7 +55,7 @@ class FilesystemDisplay {
             kblayout: {
                 width: 24,
                 height: 24,
-                svg: '<path d="M 18.9994,9.99807L 16.9994,9.99807L 16.9994,7.99807L 18.9994,7.99807M 18.9994,12.9981L 16.9994,12.9981L 16.9994,10.9981L 18.9994,10.9981M 15.9994,9.99807L 13.9994,9.99807L 13.9994,7.99807L 15.9994,7.99807M 15.9994,12.9981L 13.9994,12.9981L 13.9994,10.9981L 15.9994,10.9981M 15.9994,16.9981L 7.99941,16.9981L 7.99941,14.9981L 15.9994,14.9981M 6.99941,9.99807L 4.99941,9.99807L 4.99941,7.99807L 6.99941,7.99807M 6.99941,12.9981L 4.99941,12.9981L 4.99941,10.9981L 6.99941,10.9981M 7.99941,10.9981L 9.99941,10.9981L 9.99941,12.9981L 7.99941,12.9981M 7.99941,7.99807L 9.99941,7.99807L 9.99941,9.99807L 7.99941,9.99807M 10.9994,10.9981L 12.9994,10.9981L 12.9994,12.9981L 10.9994,12.9981M 10.9994,7.99807L 12.9994,7.99807L 12.9994,9.99807L 10.9994,9.99807M 19.9994,4.99807L 3.99941,4.99807C 2.89441,4.99807 2.0094,5.89406 2.0094,6.99807L 1.99941,16.9981C 1.99941,18.1021 2.89441,18.9981 3.99941,18.9981L 19.9994,18.9981C 21.1034,18.9981 21.9994,18.1021 21.9994,16.9981L 21.9994,6.99807C 21.9994,5.89406 21.1034,4.99807 19.9994,4.99807 Z"/>'
+                svg: "<path d=\"M 18.9994,9.99807L 16.9994,9.99807L 16.9994,7.99807L 18.9994,7.99807M 18.9994,12.9981L 16.9994,12.9981L 16.9994,10.9981L 18.9994,10.9981M 15.9994,9.99807L 13.9994,9.99807L 13.9994,7.99807L 15.9994,7.99807M 15.9994,12.9981L 13.9994,12.9981L 13.9994,10.9981L 15.9994,10.9981M 15.9994,16.9981L 7.99941,16.9981L 7.99941,14.9981L 15.9994,14.9981M 6.99941,9.99807L 4.99941,9.99807L 4.99941,7.99807L 6.99941,7.99807M 6.99941,12.9981L 4.99941,12.9981L 4.99941,10.9981L 6.99941,10.9981M 7.99941,10.9981L 9.99941,10.9981L 9.99941,12.9981L 7.99941,12.9981M 7.99941,7.99807L 9.99941,7.99807L 9.99941,9.99807L 7.99941,9.99807M 10.9994,10.9981L 12.9994,10.9981L 12.9994,12.9981L 10.9994,12.9981M 10.9994,7.99807L 12.9994,7.99807L 12.9994,9.99807L 10.9994,9.99807M 19.9994,4.99807L 3.99941,4.99807C 2.89441,4.99807 2.0094,5.89406 2.0094,6.99807L 1.99941,16.9981C 1.99941,18.1021 2.89441,18.9981 3.99941,18.9981L 19.9994,18.9981C 21.1034,18.9981 21.9994,18.1021 21.9994,16.9981L 21.9994,6.99807C 21.9994,5.89406 21.1034,4.99807 19.9994,4.99807 Z\"/>"
             },
             kblayoutsDir: {
                 width: 24,
@@ -59,7 +65,7 @@ class FilesystemDisplay {
             settings: {
                 width: 24,
                 height: 24,
-                svg: '<path d="M 11.9994,15.498C 10.0664,15.498 8.49939,13.931 8.49939,11.998C 8.49939,10.0651 10.0664,8.49805 11.9994,8.49805C 13.9324,8.49805 15.4994,10.0651 15.4994,11.998C 15.4994,13.931 13.9324,15.498 11.9994,15.498 Z M 19.4284,12.9741C 19.4704,12.6531 19.4984,12.329 19.4984,11.998C 19.4984,11.6671 19.4704,11.343 19.4284,11.022L 21.5414,9.36804C 21.7294,9.21606 21.7844,8.94604 21.6594,8.73004L 19.6594,5.26605C 19.5354,5.05005 19.2734,4.96204 19.0474,5.04907L 16.5584,6.05206C 16.0424,5.65607 15.4774,5.32104 14.8684,5.06903L 14.4934,2.41907C 14.4554,2.18103 14.2484,1.99805 13.9994,1.99805L 9.99939,1.99805C 9.74939,1.99805 9.5434,2.18103 9.5054,2.41907L 9.1304,5.06805C 8.52039,5.32104 7.95538,5.65607 7.43939,6.05206L 4.95139,5.04907C 4.7254,4.96204 4.46338,5.05005 4.33939,5.26605L 2.33939,8.73004C 2.21439,8.94604 2.26938,9.21606 2.4574,9.36804L 4.5694,11.022C 4.5274,11.342 4.49939,11.6671 4.49939,11.998C 4.49939,12.329 4.5274,12.6541 4.5694,12.9741L 2.4574,14.6271C 2.26938,14.78 2.21439,15.05 2.33939,15.2661L 4.33939,18.73C 4.46338,18.946 4.7254,19.0341 4.95139,18.947L 7.4404,17.944C 7.95639,18.34 8.52139,18.675 9.1304,18.9271L 9.5054,21.577C 9.5434,21.8151 9.74939,21.998 9.99939,21.998L 13.9994,21.998C 14.2484,21.998 14.4554,21.8151 14.4934,21.577L 14.8684,18.9271C 15.4764,18.6741 16.0414,18.34 16.5574,17.9431L 19.0474,18.947C 19.2734,19.0341 19.5354,18.946 19.6594,18.73L 21.6594,15.2661C 21.7844,15.05 21.7294,14.78 21.5414,14.6271L 19.4284,12.9741 Z"/>'
+                svg: "<path d=\"M 11.9994,15.498C 10.0664,15.498 8.49939,13.931 8.49939,11.998C 8.49939,10.0651 10.0664,8.49805 11.9994,8.49805C 13.9324,8.49805 15.4994,10.0651 15.4994,11.998C 15.4994,13.931 13.9324,15.498 11.9994,15.498 Z M 19.4284,12.9741C 19.4704,12.6531 19.4984,12.329 19.4984,11.998C 19.4984,11.6671 19.4704,11.343 19.4284,11.022L 21.5414,9.36804C 21.7294,9.21606 21.7844,8.94604 21.6594,8.73004L 19.6594,5.26605C 19.5354,5.05005 19.2734,4.96204 19.0474,5.04907L 16.5584,6.05206C 16.0424,5.65607 15.4774,5.32104 14.8684,5.06903L 14.4934,2.41907C 14.4554,2.18103 14.2484,1.99805 13.9994,1.99805L 9.99939,1.99805C 9.74939,1.99805 9.5434,2.18103 9.5054,2.41907L 9.1304,5.06805C 8.52039,5.32104 7.95538,5.65607 7.43939,6.05206L 4.95139,5.04907C 4.7254,4.96204 4.46338,5.05005 4.33939,5.26605L 2.33939,8.73004C 2.21439,8.94604 2.26938,9.21606 2.4574,9.36804L 4.5694,11.022C 4.5274,11.342 4.49939,11.6671 4.49939,11.998C 4.49939,12.329 4.5274,12.6541 4.5694,12.9741L 2.4574,14.6271C 2.26938,14.78 2.21439,15.05 2.33939,15.2661L 4.33939,18.73C 4.46338,18.946 4.7254,19.0341 4.95139,18.947L 7.4404,17.944C 7.95639,18.34 8.52139,18.675 9.1304,18.9271L 9.5054,21.577C 9.5434,21.8151 9.74939,21.998 9.99939,21.998L 13.9994,21.998C 14.2484,21.998 14.4554,21.8151 14.4934,21.577L 14.8684,18.9271C 15.4764,18.6741 16.0414,18.34 16.5574,17.9431L 19.0474,18.947C 19.2734,19.0341 19.5354,18.946 19.6594,18.73L 21.6594,15.2661C 21.7844,15.05 21.7294,14.78 21.5414,14.6271L 19.4284,12.9741 Z\"/>"
             }
         };
 
@@ -92,20 +98,26 @@ class FilesystemDisplay {
         }, 1000);
 
         this._asyncFSwrapper = new Proxy(fs, {
-            get: function(fs, prop) {
+            get: function (fs, prop) {
                 if (prop in fs) {
-                    return function(...args) {
+                    return function (...args) {
                         return new Promise((resolve, reject) => {
                             fs[prop](...args, (err, d) => {
-                                if (typeof err !== "undefined" && err !== null) reject(err);
-                                if (typeof d !== "undefined") resolve(d);
-                                if (typeof d === "undefined" && typeof err === "undefined") resolve();
+                                if (typeof err !== "undefined" && err !== null) {
+                                    reject(err);
+                                }
+                                if (typeof d !== "undefined") {
+                                    resolve(d);
+                                }
+                                if (typeof d === "undefined" && typeof err === "undefined") {
+                                    resolve();
+                                }
                             });
                         });
-                    }
+                    };
                 }
             },
-            set: function() {
+            set: function () {
                 return false;
             }
         });
@@ -119,13 +131,17 @@ class FilesystemDisplay {
 
         this.followTab = () => {
             // Don't follow tabs when running in detached mode, see #432
-            if (this._noTracking) return false;
+            if (this._noTracking) {
+                return false;
+            }
 
-            let num = window.currentTerm;
+            const num = window.currentTerm;
 
             window.term[num].oncwdchange = cwd => {
                 // See #501
-                if (this._noTracking) return false;
+                if (this._noTracking) {
+                    return false;
+                }
 
                 if (cwd && cwd !== this.cwd_path && window.currentTerm === num) {
                     this.cwd_path = cwd;
@@ -176,7 +192,9 @@ class FilesystemDisplay {
         };
 
         this.readFS = async dir => {
-            if (this.failed === true || this._reading) return false;
+            if (this.failed === true || this._reading) {
+                return false;
+            }
             this._reading = true;
 
             document.getElementById("fs_disp_title_dir").innerText = this.dirpath;
@@ -186,9 +204,11 @@ class FilesystemDisplay {
                 document.querySelector("section#filesystem > h3.title > p:first-of-type").innerText = "FILESYSTEM - TRACKING FAILED, RUNNING DETACHED FROM TTY";
             }
 
-            if (process.platform === "win32" && dir.endsWith(":")) dir = dir+"\\";
-            let tcwd = dir;
-            let content = await this._asyncFSwrapper.readdir(tcwd).catch(err => {
+            if (process.platform === "win32" && dir.endsWith(":")) {
+                dir = dir + "\\";
+            }
+            const tcwd = dir;
+            const content = await this._asyncFSwrapper.readdir(tcwd).catch(err => {
                 console.warn(err);
                 if (this._noTracking === true && this.dirpath) { // #262
                     this.setFailedState();
@@ -205,16 +225,18 @@ class FilesystemDisplay {
             this.cwd = [];
 
             await new Promise((resolve, reject) => {
-                if (content.length === 0) resolve();
+                if (content.length === 0) {
+                    resolve();
+                }
 
                 content.forEach(async (file, i) => {
-                    let fstat = await this._asyncFSwrapper.lstat(path.join(tcwd, file)).catch(e => {
+                    const fstat = await this._asyncFSwrapper.lstat(path.join(tcwd, file)).catch(e => {
                         if (!e.message.includes("EPERM") && !e.message.includes("EBUSY")) {
                             reject();
                         }
                     });
 
-                    let e = {
+                    const e = {
                         name: window._escapeHtml(file),
                         path: path.resolve(tcwd, file),
                         type: "other",
@@ -229,8 +251,12 @@ class FilesystemDisplay {
                             e.category = "dir";
                             e.type = "dir";
                         }
-                        if (e.category === "dir" && tcwd === settingsDir && file === "themes") e.type="edex-themesDir";
-                        if (e.category === "dir" && tcwd === settingsDir && file === "keyboards") e.type = "edex-kblayoutsDir";
+                        if (e.category === "dir" && tcwd === settingsDir && file === "themes") {
+                            e.type = "edex-themesDir";
+                        }
+                        if (e.category === "dir" && tcwd === settingsDir && file === "keyboards") {
+                            e.type = "edex-kblayoutsDir";
+                        }
 
                         if (fstat.isSymbolicLink()) {
                             e.category = "symlink";
@@ -247,21 +273,37 @@ class FilesystemDisplay {
                         e.hidden = true;
                     }
 
-                    if (e.category === "file" && tcwd === themesDir && file.endsWith(".json")) e.type = "edex-theme";
-                    if (e.category === "file" && tcwd === keyboardsDir && file.endsWith(".json")) e.type = "edex-kblayout";
-                    if (e.category === "file" && tcwd === settingsDir && file === "settings.json") e.type = "edex-settings";
-                    if (e.category === "file" && tcwd === settingsDir && file === "shortcuts.json") e.type = "edex-shortcuts";
+                    if (e.category === "file" && tcwd === themesDir && file.endsWith(".json")) {
+                        e.type = "edex-theme";
+                    }
+                    if (e.category === "file" && tcwd === keyboardsDir && file.endsWith(".json")) {
+                        e.type = "edex-kblayout";
+                    }
+                    if (e.category === "file" && tcwd === settingsDir && file === "settings.json") {
+                        e.type = "edex-settings";
+                    }
+                    if (e.category === "file" && tcwd === settingsDir && file === "shortcuts.json") {
+                        e.type = "edex-shortcuts";
+                    }
 
-                    if (file.startsWith(".")) e.hidden = true;
+                    if (file.startsWith(".")) {
+                        e.hidden = true;
+                    }
 
                     this.cwd.push(e);
-                    if (i === content.length-1) resolve();
+                    if (i === content.length - 1) {
+                        resolve();
+                    }
                 });
-            }).catch(() => { this.setFailedState() });
+            }).catch(() => {
+                this.setFailedState();
+            });
 
-            if (this.failed) return false;
+            if (this.failed) {
+                return false;
+            }
 
-            let ordering = {
+            const ordering = {
                 dir: 0,
                 symlink: 1,
                 file: 2,
@@ -290,10 +332,12 @@ class FilesystemDisplay {
         };
 
         this.readDevices = async () => {
-            if (this.failed === true) return false;
+            if (this.failed === true) {
+                return false;
+            }
 
-            let blocks = await window.si.blockDevices();
-            let devices = [];
+            const blocks = await window.si.blockDevices();
+            const devices = [];
             blocks.forEach(block => {
                 if (fs.existsSync(block.mount)) {
                     let type = (block.type === "rom") ? "rom" : "disk";
@@ -314,9 +358,11 @@ class FilesystemDisplay {
 
         this.render = async (originBlockList, isDiskView) => {
             // Work on a clone of the blocklist to avoid altering fsDisp.cwd
-            let blockList = JSON.parse(JSON.stringify(originBlockList));
+            const blockList = JSON.parse(JSON.stringify(originBlockList));
 
-            if (this.failed === true) return false;
+            if (this.failed === true) {
+                return false;
+            }
 
             if (isDiskView) {
                 document.getElementById("fs_disp_title_dir").innerText = "Showing available block devices";
@@ -329,9 +375,9 @@ class FilesystemDisplay {
                 document.querySelector("section#filesystem > h3.title > p:first-of-type").innerText = "FILESYSTEM - TRACKING FAILED, RUNNING DETACHED FROM TTY";
             }
 
-            let filesDOM = ``;
+            let filesDOM = "";
             blockList.forEach((e, blockIndex) => {
-                let hidden = e.hidden ? " hidden" : "";
+                const hidden = e.hidden ? " hidden" : "";
 
                 let cmdPrefix = `if (window.keyboard.container.dataset.isCtrlOn == "true") {
                                 electron.shell.openPath(fsDisp.cwd[${blockIndex}].path);
@@ -339,9 +385,9 @@ class FilesystemDisplay {
                             } else if (window.keyboard.container.dataset.isShiftOn == "true") {
                                 window.term[window.currentTerm].write("\\""+fsDisp.cwd[${blockIndex}].path+"\\"");
                             } else {
-                          `.replace(/\n+ */g, ''); // Minify
+                          `.replace(/\n+ */g, ""); // Minify
 
-                let cmdSuffix = `}`;
+                let cmdSuffix = "}";
 
                 let cmd;
 
@@ -349,12 +395,12 @@ class FilesystemDisplay {
                     if (e.type === "dir" || e.type.endsWith("Dir")) {
                         cmd = `window.term[window.currentTerm].writelr("cd \\""+fsDisp.cwd[${blockIndex}].name+"\\"")`;
                     } else if (e.type === "up") {
-                        cmd = `window.term[window.currentTerm].writelr("cd ..")`;
+                        cmd = "window.term[window.currentTerm].writelr(\"cd ..\")";
                     } else if (e.type === "disk" || e.type === "rom" || e.type === "usb") {
                         if (process.platform === "win32") {
-                            cmd = `window.term[window.currentTerm].writelr("${e.path.replace(/\\/g, '')}")`;
+                            cmd = `window.term[window.currentTerm].writelr("${e.path.replace(/\\/g, "")}")`;
                         } else {
-                            cmd = `window.term[window.currentTerm].writelr("cd \\"${e.path.replace(/\\/g, '')}\\"")`;
+                            cmd = `window.term[window.currentTerm].writelr("cd \\"${e.path.replace(/\\/g, "")}\\"")`;
                         }
                     } else {
                         cmd = `window.term[window.currentTerm].write("\\""+fsDisp.cwd[${blockIndex}].path+"\\"")`;
@@ -363,9 +409,9 @@ class FilesystemDisplay {
                     if (e.type === "dir" || e.type.endsWith("Dir")) {
                         cmd = `window.fsDisp.readFS(fsDisp.cwd[${blockIndex}].path)`;
                     } else if (e.type === "up") {
-                        cmd = `window.fsDisp.readFS(path.resolve(window.fsDisp.dirpath, ".."))`;
+                        cmd = "window.fsDisp.readFS(path.resolve(window.fsDisp.dirpath, \"..\"))";
                     } else if (e.type === "disk" || e.type === "rom" || e.type === "usb") {
-                        cmd = `window.fsDisp.readFS("${e.path.replace(/\\/g, '')}")`;
+                        cmd = `window.fsDisp.readFS("${e.path.replace(/\\/g, "")}")`;
                     } else {
                         cmd = `window.term[window.currentTerm].write("\\""+fsDisp.cwd[${blockIndex}].path+"\\"")`;
                     }
@@ -380,15 +426,15 @@ class FilesystemDisplay {
                 }
 
                 if (e.type === "showDisks") {
-                    cmd = `window.fsDisp.readDevices()`;
-                    cmdPrefix = '';
-                    cmdSuffix = '';
+                    cmd = "window.fsDisp.readDevices()";
+                    cmdPrefix = "";
+                    cmdSuffix = "";
                 }
 
                 if (e.type === "up") {
                     // cmd is OS-specific and defined above
-                    cmdPrefix = '';
-                    cmdSuffix = '';
+                    cmdPrefix = "";
+                    cmdSuffix = "";
                 }
 
                 if (e.type === "edex-theme") {
@@ -398,15 +444,15 @@ class FilesystemDisplay {
                     cmd = `window.remakeKeyboard("${e.name.slice(0, -5)}")`;
                 }
                 if (e.type === "edex-settings") {
-                    cmd = `window.openSettings()`;
+                    cmd = "window.openSettings()";
                 }
                 if (e.type === "edex-shortcuts") {
-                    cmd = `window.openShortcutsHelp()`;
+                    cmd = "window.openShortcutsHelp()";
                 }
 
                 let icon = "";
                 let type = "";
-                switch(e.type) {
+                switch (e.type) {
                     case "showDisks":
                         icon = this.icons.showDisks;
                         type = "--";
@@ -454,15 +500,19 @@ class FilesystemDisplay {
                         type = "eDEX-UI keyboards folder";
                         break;
                     default:
-                        let iconName = this.fileIconsMatcher(e.name);
+                        const iconName = this.fileIconsMatcher(e.name);
                         icon = this.icons[iconName];
                         if (typeof icon === "undefined") {
-                            if (e.type === "file") icon = this.icons.file;
+                            if (e.type === "file") {
+                                icon = this.icons.file;
+                            }
                             if (e.type === "dir") {
                                 icon = this.icons.dir;
                                 type = "folder";
                             }
-                            if (typeof icon === "undefined") icon = this.icons.other;
+                            if (typeof icon === "undefined") {
+                                icon = this.icons.other;
+                            }
                         } else if (e.category !== "dir") {
                             type = iconName.replace("icon-", "");
                         } else {
@@ -471,11 +521,13 @@ class FilesystemDisplay {
                         break;
                 }
 
-                if (type === "") type = e.type;
+                if (type === "") {
+                    type = e.type;
+                }
                 e.type = type;
 
                 // Handle displayable media
-                if (e.type === 'video' || e.type === 'audio' || e.type === 'image') {
+                if (e.type === "video" || e.type === "audio" || e.type === "image") {
                     this.cwd[blockIndex].type = e.type;
                     cmd = `window.fsDisp.openMedia(${blockIndex})`;
                 }
@@ -491,7 +543,7 @@ class FilesystemDisplay {
                     e.lastAccessed = "--";
                 }
 
-                filesDOM += `<div class="fs_disp_${e.type}${hidden} animationWait" onclick='${cmdPrefix+cmd+cmdSuffix}'>
+                filesDOM += `<div class="fs_disp_${e.type}${hidden} animationWait" onclick='${cmdPrefix + cmd + cmdSuffix}'>
                                 <svg viewBox="0 0 ${icon.width} ${icon.height}" fill="${this.iconcolor}">
                                     ${icon.svg}
                                 </svg>
@@ -512,7 +564,7 @@ class FilesystemDisplay {
             // Render animation
             let id = 0;
             while (this.filesContainer.childNodes[id]) {
-                let e = this.filesContainer.childNodes[id];
+                const e = this.filesContainer.childNodes[id];
                 e.setAttribute("class", e.className.replace(" animationWait", ""));
 
                 if (window.settings.hideDotfiles !== true || e.className.indexOf("hidden") === -1) {
@@ -543,17 +595,19 @@ class FilesystemDisplay {
         };
 
         this.renderDiskUsage = async fsBlock => {
-            if (document.getElementById("fs_space_bar").getAttribute("onclick") !== "" || fsBlock === null) return;
+            if (document.getElementById("fs_space_bar").getAttribute("onclick") !== "" || fsBlock === null) {
+                return;
+            }
 
-            let splitter = (process.platform === "win32") ? "\\" : "/";
-            let displayMount = (fsBlock.mount.length < 18) ? fsBlock.mount : "..."+splitter+fsBlock.mount.split(splitter).pop();
+            const splitter = (process.platform === "win32") ? "\\" : "/";
+            const displayMount = (fsBlock.mount.length < 18) ? fsBlock.mount : "..." + splitter + fsBlock.mount.split(splitter).pop();
 
             // See #226
             if (!isNaN(fsBlock.use)) {
                 this.space_bar.text.innerHTML = `Mount <strong>${displayMount}</strong> used <strong>${Math.round(fsBlock.use)}%</strong>`;
                 this.space_bar.bar.value = Math.round(fsBlock.use);
             } else if (!isNaN((fsBlock.size / fsBlock.used) * 100)) {
-                let usage = Math.round((fsBlock.size / fsBlock.used) * 100);
+                const usage = Math.round((fsBlock.size / fsBlock.used) * 100);
 
                 this.space_bar.text.innerHTML = `Mount <strong>${displayMount}</strong> used <strong>${usage}%</strong>`;
                 this.space_bar.bar.value = usage;
@@ -579,14 +633,14 @@ class FilesystemDisplay {
                 name = block.name;
             }
 
-            let mime = require("mime-types");
+            const mime = require("mime-types");
 
             block.path = block.path.replace(/\\/g, "/");
 
-            let filetype = mime.lookup(name.split(".")[name.split(".").length - 1]);
+            const filetype = mime.lookup(name.split(".")[name.split(".").length - 1]);
             switch (filetype) {
                 case "application/pdf":
-                    let html = `<div>
+                    const html = `<div>
                         <div class="pdf_options">
                             <button class="zoom_in">
                                 <svg viewBox="0 0 ${this.icons["zoom-in"].width} ${this.icons["zoom-in"].height}" fill="${this.iconcolor}">
@@ -630,7 +684,7 @@ class FilesystemDisplay {
                     break;
                 default:
                     if (mime.charset(filetype) === "UTF-8") {
-                        fs.readFile(block.path, 'utf-8', (err, data) => {
+                        fs.readFile(block.path, "utf-8", (err, data) => {
                             if (err) {
                                 new Modal({
                                     type: "info",
@@ -646,7 +700,7 @@ class FilesystemDisplay {
                                     title: _escapeHtml(name),
                                     html: `<textarea id="fileEdit" rows="40" cols="150" spellcheck="false">${data}</textarea><p id="fedit-status"></p>`,
                                     buttons: [
-                                        {label:"Save to Disk",action:`window.writeFile('${block.path}')`}
+                                        { label: "Save to Disk",action: `window.writeFile('${block.path}')` }
                                     ]
                                 }, () => {
                                     window.keyboard.attach();
@@ -654,8 +708,8 @@ class FilesystemDisplay {
                                 }
                             );
                         });
-                   break;
-                }
+                        break;
+                    }
             }
         };
 

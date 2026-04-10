@@ -6,7 +6,7 @@ module.exports = {
     "!src/assets/**",
     "!src/**/*.test.js"
   ],
-  coverageThresholds: {
+  coverageThreshold: {
     global: {
       branches: 50,
       functions: 50,

@@ -1,6 +1,8 @@
 class LocationGlobe {
     constructor(parentId) {
-        if (!parentId) throw "Missing parameters";
+        if (!parentId) {
+            throw "Missing parameters";
+        }
 
         const path = require("path");
 
@@ -24,8 +26,8 @@ class LocationGlobe {
 
 
         setTimeout(() => {
-            let container = document.getElementById("mod_globe_innercontainer");
-            let placeholder = document.getElementById("mod_globe_canvas_placeholder");
+            const container = document.getElementById("mod_globe_innercontainer");
+            const placeholder = document.getElementById("mod_globe_canvas_placeholder");
 
             // Create Globe
             this.globe = new this.ENCOM.Globe(placeholder.offsetWidth, placeholder.offsetHeight, {
@@ -58,7 +60,7 @@ class LocationGlobe {
                     setTimeout(() => {
                         try {
                             requestAnimationFrame(window.mods.globe._animate);
-                        } catch(e) {
+                        } catch (e) {
                             // We probably got caught in a theme change. Print it out but everything should keep running fine.
                             console.warn(e);
                         }
@@ -72,7 +74,7 @@ class LocationGlobe {
 
             // resize handler
             this.resizeHandler = () => {
-                let canvas = document.querySelector("div#mod_globe canvas");
+                const canvas = document.querySelector("div#mod_globe canvas");
                 window.mods.globe.globe.camera.aspect = canvas.offsetWidth / canvas.offsetHeight;
                 window.mods.globe.globe.camera.updateProjectionMatrix();
                 window.mods.globe.globe.renderer.setSize(canvas.offsetWidth, canvas.offsetHeight);
@@ -88,26 +90,26 @@ class LocationGlobe {
                 } catch {
                     // do nothing
                 }
-                let geo = (data !== null ? data.location : {});
+                const geo = (data !== null ? data.location : {});
                 if (geo.latitude && geo.longitude) {
                     const lat = Number(geo.latitude);
                     const lon = Number(geo.longitude);
                     window.mods.globe.conns.push({
                         ip,
-                        pin: window.mods.globe.globe.addPin(lat, lon, "", 1.2),
+                        pin: window.mods.globe.globe.addPin(lat, lon, "", 1.2)
                     });
                 }
             };
             this.removeConn = ip => {
-                let index = this.conns.findIndex(x => x.ip === ip);
+                const index = this.conns.findIndex(x => x.ip === ip);
                 this.conns[index].pin.remove();
                 this.conns.splice(index, 1);
             };
 
             // Add random satellites
-            let constellation = [];
-            for(var i = 0; i< 2; i++){
-                for(var j = 0; j< 3; j++){
+            const constellation = [];
+            for (let i = 0; i < 2; i++) {
+                for (let j = 0; j < 3; j++) {
                     constellation.push({
                         lat: 50 * i - 30 + 15 * Math.random(),
                         lon: 120 * j - 120 + 30 * i,
@@ -136,12 +138,12 @@ class LocationGlobe {
     addRandomConnectedMarkers() {
         const randomLat = this.getRandomInRange(40, 90, 3);
         const randomLong = this.getRandomInRange(-180, 0, 3);
-        this.globe.addMarker(randomLat, randomLong, '');
-        this.globe.addMarker(randomLat - 20, randomLong + 150, '', true);
+        this.globe.addMarker(randomLat, randomLong, "");
+        this.globe.addMarker(randomLat - 20, randomLong + 150, "", true);
     }
     addTemporaryConnectedMarker(ip) {
-        let data = window.mods.netstat.geoLookup.get(ip);
-        let geo = (data !== null ? data.location : {});
+        const data = window.mods.netstat.geoLookup.get(ip);
+        const geo = (data !== null ? data.location : {});
         if (geo.latitude && geo.longitude) {
             const lat = Number(geo.latitude);
             const lon = Number(geo.longitude);
@@ -150,14 +152,16 @@ class LocationGlobe {
                 ip,
                 pin: window.mods.globe.globe.addPin(lat, lon, "", 1.2)
             });
-            let mark = window.mods.globe.globe.addMarker(lat, lon, '', true);
+            const mark = window.mods.globe.globe.addMarker(lat, lon, "", true);
             setTimeout(() => {
                 mark.remove();
             }, 3000);
         }
     }
     removeMarkers() {
-        this.globe.markers.forEach(marker => { marker.remove(); });
+        this.globe.markers.forEach(marker => {
+            marker.remove();
+        });
         this.globe.markers = [];
     }
     removePins() {
@@ -186,13 +190,13 @@ class LocationGlobe {
                 document.querySelector("div#mod_globe").setAttribute("class", "");
             }).catch(() => {
                 document.querySelector("i.mod_globe_headerInfo").innerText = "UNKNOWN";
-            })
+            });
         }
     }
     async updateConOnlineConnection() {
-        let newgeo = window.mods.netstat.ipinfo.geo;
-        newgeo.latitude = Math.round(newgeo.latitude*10000)/10000;
-        newgeo.longitude = Math.round(newgeo.longitude*10000)/10000;
+        const newgeo = window.mods.netstat.ipinfo.geo;
+        newgeo.latitude = Math.round(newgeo.latitude * 10000) / 10000;
+        newgeo.longitude = Math.round(newgeo.longitude * 10000) / 10000;
 
         if (newgeo.latitude !== this.lastgeo.latitude || newgeo.longitude !== this.lastgeo.longitude) {
 
@@ -210,12 +214,14 @@ class LocationGlobe {
         document.querySelector("div#mod_globe").setAttribute("class", "");
     }
     updateConns() {
-        if (!window.mods.globe.globe || window.mods.netstat.offline) return false;
+        if (!window.mods.globe.globe || window.mods.netstat.offline) {
+            return false;
+        }
         window.si.networkConnections().then(conns => {
-            let newconns = [];
+            const newconns = [];
             conns.forEach(conn => {
-                let ip = conn.peeraddress;
-                let state = conn.state;
+                const ip = conn.peeraddress;
+                const state = conn.state;
                 if (state === "ESTABLISHED" && ip !== "0.0.0.0" && ip !== "127.0.0.1" && ip !== "::") {
                     newconns.push(ip);
                 }

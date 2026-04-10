@@ -1,6 +1,8 @@
 class Netstat {
     constructor(parentId) {
-        if (!parentId) throw "Missing parameters";
+        if (!parentId) {
+            throw "Missing parameters";
+        }
 
         // Create DOM
         this.parent = document.getElementById(parentId);
@@ -25,7 +27,7 @@ class Netstat {
         </div>`;
 
         this.offline = false;
-        this.lastconn = {finished: false}; // Prevent geoip lookup attempt until maxminddb is loaded
+        this.lastconn = { finished: false }; // Prevent geoip lookup attempt until maxminddb is loaded
         this.iface = null;
         this.failedAttempts = {};
         this.runsBeforeGeoIPUpdate = 0;
@@ -45,12 +47,14 @@ class Netstat {
         this.geoLookup = {
             get: () => null
         };
-        let geolite2 = require("geolite2-redist");
-        let maxmind = require("maxmind");
+        const geolite2 = require("geolite2-redist");
+        const maxmind = require("maxmind");
         geolite2.downloadDbs(require("path").join(require("@electron/remote").app.getPath("userData"), "geoIPcache")).then(() => {
-           geolite2.open('GeoLite2-City', path => {
+            geolite2.open("GeoLite2-City", path => {
                 return maxmind.open(path);
-            }).catch(e => {throw e}).then(lookup => {
+            }).catch(e => {
+                throw e;
+            }).then(lookup => {
                 this.geoLookup = lookup;
                 this.lastconn.finished = true;
             });
@@ -95,39 +99,43 @@ class Netstat {
                 }
             }
 
-            if (net.ip4 !== this.internalIPv4) this.runsBeforeGeoIPUpdate = 0;
+            if (net.ip4 !== this.internalIPv4) {
+                this.runsBeforeGeoIPUpdate = 0;
+            }
 
             this.iface = net.iface;
             this.internalIPv4 = net.ip4;
-            document.getElementById("mod_netstat_iname").innerText = "Interface: "+net.iface;
+            document.getElementById("mod_netstat_iname").innerText = "Interface: " + net.iface;
 
             if (net.ip4 === "127.0.0.1") {
                 offline = true;
             } else {
                 if (this.runsBeforeGeoIPUpdate === 0 && this.lastconn.finished) {
-                    this.lastconn = require("https").get({host: "myexternalip.com", port: 443, path: "/json", localAddress: net.ip4, agent: this._httpsAgent}, res => {
+                    this.lastconn = require("https").get({ host: "myexternalip.com", port: 443, path: "/json", localAddress: net.ip4, agent: this._httpsAgent }, res => {
                         let rawData = "";
                         res.on("data", chunk => {
                             rawData += chunk;
                         });
                         res.on("end", () => {
                             try {
-                                let data = JSON.parse(rawData);
+                                const data = JSON.parse(rawData);
                                 this.ipinfo = {
                                     ip: data.ip,
                                     geo: this.geoLookup.get(data.ip).location
                                 };
 
-                                let ip = this.ipinfo.ip;
+                                const ip = this.ipinfo.ip;
                                 document.querySelector("#mod_netstat_innercontainer > div:nth-child(2) > h2").innerHTML = window._escapeHtml(ip);
 
                                 this.runsBeforeGeoIPUpdate = 10;
-                            } catch(e) {
+                            } catch (e) {
                                 this.failedAttempts[e] = (this.failedAttempts[e] || 0) + 1;
-                                if (this.failedAttempts[e] > 2) return false;
+                                if (this.failedAttempts[e] > 2) {
+                                    return false;
+                                }
                                 console.warn(e);
                                 console.info(rawData.toString());
-                                let electron = require("electron");
+                                const electron = require("electron");
                                 electron.ipcRenderer.send("log", "note", "NetStat: Error parsing data from myexternalip.com");
                                 electron.ipcRenderer.send("log", "debug", `Error: ${e}`);
                             }
@@ -139,7 +147,9 @@ class Netstat {
                     this.runsBeforeGeoIPUpdate = this.runsBeforeGeoIPUpdate - 1;
                 }
 
-                let p = await this.ping(window.settings.pingAddr || "1.1.1.1", 80, net.ip4).catch(() => { offline = true });
+                const p = await this.ping(window.settings.pingAddr || "1.1.1.1", 80, net.ip4).catch(() => {
+                    offline = true;
+                });
 
                 this.offline = offline;
                 if (offline) {
@@ -148,15 +158,15 @@ class Netstat {
                     document.querySelector("#mod_netstat_innercontainer > div:nth-child(3) > h2").innerHTML = "--ms";
                 } else {
                     document.querySelector("#mod_netstat_innercontainer > div:first-child > h2").innerHTML = "ONLINE";
-                    document.querySelector("#mod_netstat_innercontainer > div:nth-child(3) > h2").innerHTML = Math.round(p)+"ms";
+                    document.querySelector("#mod_netstat_innercontainer > div:nth-child(3) > h2").innerHTML = Math.round(p) + "ms";
                 }
             }
         });
     }
     ping(target, port, local) {
         return new Promise((resolve, reject) => {
-            let s = new require("net").Socket();
-            let start = process.hrtime();
+            const s = new require("net").Socket();
+            const start = process.hrtime();
 
             s.connect({
                 port,
@@ -164,16 +174,16 @@ class Netstat {
                 localAddress: local,
                 family: 4
             }, () => {
-                let time_arr = process.hrtime(start);
-                let time = (time_arr[0] * 1e9 + time_arr[1]) / 1e6;
+                const time_arr = process.hrtime(start);
+                const time = (time_arr[0] * 1e9 + time_arr[1]) / 1e6;
                 resolve(time);
                 s.destroy();
             });
-            s.on('error', e => {
+            s.on("error", e => {
                 s.destroy();
                 reject(e);
             });
-            s.setTimeout(1900, function() {
+            s.setTimeout(1900, function () {
                 s.destroy();
                 reject(new Error("Socket timeout"));
             });

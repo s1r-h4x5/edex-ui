@@ -1,9 +1,9 @@
 class UpdateChecker {
     constructor() {
-        let https = require("https");
-        let electron = require("electron");
-        let remote = require("@electron/remote");
-        let current = remote.app.getVersion();
+        const https = require("https");
+        const electron = require("electron");
+        const remote = require("@electron/remote");
+        const current = remote.app.getVersion();
 
         this._failed = false;
         this._willfail = false;
@@ -21,7 +21,7 @@ class UpdateChecker {
                 "User-Agent": "eDEX-UI UpdateChecker"
             }
         }, res => {
-            switch(res.statusCode) {
+            switch (res.statusCode) {
                 case 200:
                     break;
                 case 404:
@@ -33,19 +33,19 @@ class UpdateChecker {
 
             let rawData = "";
 
-            res.on('data', chunk => {
+            res.on("data", chunk => {
                 rawData += chunk;
             });
 
-            res.on('end', () => {
-                let d = rawData;
+            res.on("end", () => {
+                const d = rawData;
                 if (this._failed === true) {
                     // Do nothing, it already failed
                 } else if (this._willfail) {
                     this._fail(d.toString());
                 } else {
                     try {
-                        let release = JSON.parse(d.toString());
+                        const release = JSON.parse(d.toString());
                         if (release.tag_name.slice(1) === current) {
                             electron.ipcRenderer.send("log", "info", "UpdateChecker: Running latest version.");
                         } else if (Number(release.tag_name.slice(1).replace(/\./g, "")) < Number(current.replace("-pre", "").replace(/\./g, ""))) {
@@ -58,12 +58,12 @@ class UpdateChecker {
                             });
                             electron.ipcRenderer.send("log", "info", `UpdateChecker: New version ${release.tag_name} available.`);
                         }
-                    } catch(e) {
+                    } catch (e) {
                         this._fail(e);
                     }
                 }
             });
-        }).on('error', e => {
+        }).on("error", e => {
             this._fail(e);
         });
     }

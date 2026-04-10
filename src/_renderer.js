@@ -4,20 +4,24 @@ window.eval = global.eval = function () {
 };
 // Security helper :)
 window._escapeHtml = text => {
-    let map = {
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#039;'
+    const map = {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        "\"": "&quot;",
+        "'": "&#039;"
     };
-    return text.replace(/[&<>"']/g, m => {return map[m];});
+    return text.replace(/[&<>"']/g, m => {
+        return map[m];
+    });
 };
 window._encodePathURI = uri => {
     return encodeURI(uri).replace(/#/g, "%23");
 };
 window._purifyCSS = str => {
-    if (typeof str === "undefined") return "";
+    if (typeof str === "undefined") {
+        return "";
+    }
     if (typeof str !== "string") {
         str = str.toString();
     }
@@ -70,9 +74,9 @@ ipc.once("getThemeOverride", (e, theme) => {
     if (theme !== null) {
         window.settings.theme = theme;
         window.settings.nointroOverride = true;
-        _loadTheme(require(path.join(themesDir, window.settings.theme+".json")));
+        _loadTheme(require(path.join(themesDir, window.settings.theme + ".json")));
     } else {
-        _loadTheme(require(path.join(themesDir, window.settings.theme+".json")));
+        _loadTheme(require(path.join(themesDir, window.settings.theme + ".json")));
     }
 });
 ipc.send("getThemeOverride");
@@ -93,16 +97,16 @@ window._loadTheme = theme => {
     }
 
     // Load fonts
-    let mainFont = new FontFace(theme.cssvars.font_main, `url("${path.join(fontsDir, theme.cssvars.font_main.toLowerCase().replace(/ /g, '_')+'.woff2').replace(/\\/g, '/')}")`);
-    let lightFont = new FontFace(theme.cssvars.font_main_light, `url("${path.join(fontsDir, theme.cssvars.font_main_light.toLowerCase().replace(/ /g, '_')+'.woff2').replace(/\\/g, '/')}")`);
-    let termFont = new FontFace(theme.terminal.fontFamily, `url("${path.join(fontsDir, theme.terminal.fontFamily.toLowerCase().replace(/ /g, '_')+'.woff2').replace(/\\/g, '/')}")`);
+    const mainFont = new FontFace(theme.cssvars.font_main, `url("${path.join(fontsDir, theme.cssvars.font_main.toLowerCase().replace(/ /g, "_") + ".woff2").replace(/\\/g, "/")}")`);
+    const lightFont = new FontFace(theme.cssvars.font_main_light, `url("${path.join(fontsDir, theme.cssvars.font_main_light.toLowerCase().replace(/ /g, "_") + ".woff2").replace(/\\/g, "/")}")`);
+    const termFont = new FontFace(theme.terminal.fontFamily, `url("${path.join(fontsDir, theme.terminal.fontFamily.toLowerCase().replace(/ /g, "_") + ".woff2").replace(/\\/g, "/")}")`);
 
     document.fonts.add(mainFont);
-    document.fonts.load("12px "+theme.cssvars.font_main);
+    document.fonts.load("12px " + theme.cssvars.font_main);
     document.fonts.add(lightFont);
-    document.fonts.load("12px "+theme.cssvars.font_main_light);
+    document.fonts.load("12px " + theme.cssvars.font_main_light);
     document.fonts.add(termFont);
-    document.fonts.load("12px "+theme.terminal.fontFamily);
+    document.fonts.load("12px " + theme.terminal.fontFamily);
 
     document.querySelector("head").innerHTML += `<style class="theming">
     :root {
@@ -142,7 +146,7 @@ window._loadTheme = theme => {
 function initGraphicalErrorHandling() {
     window.edexErrorsModals = [];
     window.onerror = (msg, path, line, col, error) => {
-        let errorModal = new Modal({
+        const errorModal = new Modal({
             type: "error",
             title: error,
             message: `${msg}<br/>        at ${path}  ${line}:${col}`
@@ -163,7 +167,9 @@ function waitForFonts() {
                         resolve();
                     } else {
                         document.fonts.onloadingdone = () => {
-                            if (document.fonts.status === "loaded") resolve();
+                            if (document.fonts.status === "loaded") {
+                                resolve();
+                            }
                         };
                     }
                 }
@@ -179,15 +185,19 @@ function initSystemInformationProxy() {
     const { nanoid } = require("nanoid/non-secure");
 
     window.si = new Proxy({}, {
-        apply: () => {throw new Error("Cannot use sysinfo proxy directly as a function")},
-        set: () => {throw new Error("Cannot set a property on the sysinfo proxy")},
+        apply: () => {
+            throw new Error("Cannot use sysinfo proxy directly as a function");
+        },
+        set: () => {
+            throw new Error("Cannot set a property on the sysinfo proxy");
+        },
         get: (target, prop, receiver) => {
-            return function(...args) {
-                let callback = (typeof args[args.length - 1] === "function") ? true : false;
+            return function (...args) {
+                const callback = (typeof args[args.length - 1] === "function") ? true : false;
 
                 return new Promise((resolve, reject) => {
-                    let id = nanoid();
-                    ipc.once("systeminformation-reply-"+id, (e, res) => {
+                    const id = nanoid();
+                    ipc.once("systeminformation-reply-" + id, (e, res) => {
                         if (callback) {
                             args[args.length - 1](res);
                         }
@@ -219,8 +229,8 @@ if (window.settings.nointro || window.settings.nointroOverride) {
 
 // Startup boot log
 function displayLine() {
-    let bootScreen = document.getElementById("boot_screen");
-    let log = fs.readFileSync(path.join(__dirname, "assets", "misc", "boot_log.txt")).toString().split('\n');
+    const bootScreen = document.getElementById("boot_screen");
+    const log = fs.readFileSync(path.join(__dirname, "assets", "misc", "boot_log.txt")).toString().split("\n");
 
     function isArchUser() {
         return require("os").platform() === "linux"
@@ -238,10 +248,10 @@ function displayLine() {
     } else {
         window.audioManager.stdout.play();
     }
-    bootScreen.innerHTML += log[i]+"<br/>";
+    bootScreen.innerHTML += log[i] + "<br/>";
     i++;
 
-    switch(true) {
+    switch (true) {
         case i === 2:
             bootScreen.innerHTML += `eDEX-UI Kernel version ${electron.remote.app.getVersion()} boot at ${Date().toString()}; root:xnu-1699.22.73~1/RELEASE_X86_64`;
         case i === 4:
@@ -260,15 +270,16 @@ function displayLine() {
             setTimeout(displayLine, 25);
             break;
         case i === 83:
-            if (isArchUser())
+            if (isArchUser()) {
                 bootScreen.innerHTML += "btw i use arch<br/>";
+            }
             setTimeout(displayLine, 25);
             break;
-        case i >= log.length-2 && i < log.length:
+        case i >= log.length - 2 && i < log.length:
             setTimeout(displayLine, 300);
             break;
         default:
-            setTimeout(displayLine, Math.pow(1 - (i/1000), 3)*25);
+            setTimeout(displayLine, Math.pow(1 - (i / 1000), 3) * 25);
     }
 }
 
@@ -289,7 +300,7 @@ async function displayTitleScreen() {
     document.body.setAttribute("class", "");
     bootScreen.setAttribute("class", "center");
     bootScreen.innerHTML = "<h1>eDEX-UI</h1>";
-    let title = document.querySelector("section > h1");
+    const title = document.querySelector("section > h1");
 
     await _delay(200);
 
@@ -330,8 +341,9 @@ async function displayTitleScreen() {
 // Returns the user's desired display name
 async function getDisplayName() {
     let user = settings.username || null;
-    if (user)
+    if (user) {
         return user;
+    }
 
     try {
         user = await require("username")();
@@ -372,7 +384,7 @@ async function initUI() {
     <section id="keyboard" style="opacity:0;">
     </section>`;
     window.keyboard = new Keyboard({
-        layout: path.join(keyboardsDir, settings.keyboard+".json"),
+        layout: path.join(keyboardsDir, settings.keyboard + ".json"),
         container: "keyboard"
     });
 
@@ -382,7 +394,7 @@ async function initUI() {
 
     await _delay(270);
 
-    let greeter = document.getElementById("main_shell_greeting");
+    const greeter = document.getElementById("main_shell_greeting");
 
     getDisplayName().then(user => {
         if (user) {
@@ -436,9 +448,9 @@ async function initUI() {
         e.setAttribute("class", "mod_column activated");
     });
     let i = 0;
-    let left = document.querySelectorAll("#mod_column_left > div");
-    let right = document.querySelectorAll("#mod_column_right > div");
-    let x = setInterval(() => {
+    const left = document.querySelectorAll("#mod_column_left > div");
+    const right = document.querySelectorAll("#mod_column_right > div");
+    const x = setInterval(() => {
         if (!left[i] && !right[i]) {
             clearInterval(x);
         } else {
@@ -456,7 +468,7 @@ async function initUI() {
     await _delay(100);
 
     // Initialize the terminal
-    let shellContainer = document.getElementById("main_shell");
+    const shellContainer = document.getElementById("main_shell");
     shellContainer.innerHTML += `
         <ul id="main_shell_tabs">
             <li id="shell_tab0" onclick="window.focusShellTab(0);" class="active"><p>MAIN SHELL</p></li>
@@ -485,9 +497,11 @@ async function initUI() {
     };
     // Prevent losing hardware keyboard focus on the terminal when using touch keyboard
     window.onmouseup = e => {
-        if (window.keyboard.linkedToTerm) window.term[window.currentTerm].term.focus();
+        if (window.keyboard.linkedToTerm) {
+            window.term[window.currentTerm].term.focus();
+        }
     };
-    window.term[0].term.writeln("\033[1m"+`Welcome to eDEX-UI v${electron.remote.app.getVersion()} - Electron v${process.versions.electron}`+"\033[0m");
+    window.term[0].term.writeln("\033[1m" + `Welcome to eDEX-UI v${electron.remote.app.getVersion()} - Electron v${process.versions.electron}` + "\033[0m");
 
     await _delay(100);
 
@@ -519,7 +533,7 @@ window.themeChanger = theme => {
 window.remakeKeyboard = layout => {
     document.getElementById("keyboard").innerHTML = "";
     window.keyboard = new Keyboard({
-        layout: path.join(keyboardsDir, layout+".json" || settings.keyboard+".json"),
+        layout: path.join(keyboardsDir, layout + ".json" || settings.keyboard + ".json"),
         container: "keyboard"
     });
     ipc.send("setKbOverride", layout);
@@ -531,15 +545,15 @@ window.focusShellTab = number => {
     if (number !== window.currentTerm && window.term[number]) {
         window.currentTerm = number;
 
-        document.querySelectorAll(`ul#main_shell_tabs > li:not(:nth-child(${number+1}))`).forEach(e => {
+        document.querySelectorAll(`ul#main_shell_tabs > li:not(:nth-child(${number + 1}))`).forEach(e => {
             e.setAttribute("class", "");
         });
-        document.getElementById("shell_tab"+number).setAttribute("class", "active");
+        document.getElementById("shell_tab" + number).setAttribute("class", "active");
 
-        document.querySelectorAll(`div#main_shell_innercontainer > pre:not(:nth-child(${number+1}))`).forEach(e => {
+        document.querySelectorAll(`div#main_shell_innercontainer > pre:not(:nth-child(${number + 1}))`).forEach(e => {
             e.setAttribute("class", "");
         });
-        document.getElementById("terminal"+number).setAttribute("class", "active");
+        document.getElementById("terminal" + number).setAttribute("class", "active");
 
         window.term[number].fit();
         window.term[number].term.focus();
@@ -549,34 +563,34 @@ window.focusShellTab = number => {
     } else if (number > 0 && number <= 4 && window.term[number] !== null && typeof window.term[number] !== "object") {
         window.term[number] = null;
 
-        document.getElementById("shell_tab"+number).innerHTML = "<p>LOADING...</p>";
+        document.getElementById("shell_tab" + number).innerHTML = "<p>LOADING...</p>";
         ipc.send("ttyspawn", "true");
         ipc.once("ttyspawn-reply", (e, r) => {
             if (r.startsWith("ERROR")) {
-                document.getElementById("shell_tab"+number).innerHTML = "<p>ERROR</p>";
+                document.getElementById("shell_tab" + number).innerHTML = "<p>ERROR</p>";
             } else if (r.startsWith("SUCCESS")) {
-                let port = Number(r.substr(9));
+                const port = Number(r.substr(9));
 
                 window.term[number] = new Terminal({
                     role: "client",
-                    parentId: "terminal"+number,
+                    parentId: "terminal" + number,
                     port
                 });
 
                 window.term[number].onclose = e => {
                     delete window.term[number].onprocesschange;
-                    document.getElementById("shell_tab"+number).innerHTML = "<p>EMPTY</p>";
-                    document.getElementById("terminal"+number).innerHTML = "";
+                    document.getElementById("shell_tab" + number).innerHTML = "<p>EMPTY</p>";
+                    document.getElementById("terminal" + number).innerHTML = "";
                     window.term[number].term.dispose();
                     delete window.term[number];
                     window.useAppShortcut("PREVIOUS_TAB");
                 };
 
                 window.term[number].onprocesschange = p => {
-                    document.getElementById("shell_tab"+number).innerHTML = `<p>#${number+1} - ${p}</p>`;
+                    document.getElementById("shell_tab" + number).innerHTML = `<p>#${number + 1} - ${p}</p>`;
                 };
 
-                document.getElementById("shell_tab"+number).innerHTML = `<p>::${port}</p>`;
+                document.getElementById("shell_tab" + number).innerHTML = `<p>::${port}</p>`;
                 setTimeout(() => {
                     window.focusShellTab(number);
                 }, 500);
@@ -587,28 +601,42 @@ window.focusShellTab = number => {
 
 // Settings editor
 window.openSettings = async () => {
-    if (document.getElementById("settingsEditor")) return;
+    if (document.getElementById("settingsEditor")) {
+        return;
+    }
 
     // Build lists of available keyboards, themes, monitors
     let keyboards, themes, monitors, ifaces;
     fs.readdirSync(keyboardsDir).forEach(kb => {
-        if (!kb.endsWith(".json")) return;
+        if (!kb.endsWith(".json")) {
+            return;
+        }
         kb = kb.replace(".json", "");
-        if (kb === window.settings.keyboard) return;
+        if (kb === window.settings.keyboard) {
+            return;
+        }
         keyboards += `<option>${kb}</option>`;
     });
     fs.readdirSync(themesDir).forEach(th => {
-        if (!th.endsWith(".json")) return;
+        if (!th.endsWith(".json")) {
+            return;
+        }
         th = th.replace(".json", "");
-        if (th === window.settings.theme) return;
+        if (th === window.settings.theme) {
+            return;
+        }
         themes += `<option>${th}</option>`;
     });
     for (let i = 0; i < electron.remote.screen.getAllDisplays().length; i++) {
-        if (i !== window.settings.monitor) monitors += `<option>${i}</option>`;
+        if (i !== window.settings.monitor) {
+            monitors += `<option>${i}</option>`;
+        }
     }
-    let nets = await window.si.networkInterfaces();
+    const nets = await window.si.networkInterfaces();
     nets.forEach(net => {
-        if (net.iface !== window.mods.netstat.iface) ifaces += `<option>${net.iface}</option>`;
+        if (net.iface !== window.mods.netstat.iface) {
+            ifaces += `<option>${net.iface}</option>`;
+        }
     });
 
     // Unlink the tactile keyboard from the terminal emulator to allow filling in the settings fields
@@ -631,7 +659,7 @@ window.openSettings = async () => {
                     <tr>
                         <td>shellArgs</td>
                         <td>Arguments to pass to the shell</td>
-                        <td><input type="text" id="settingsEditor-shellArgs" value="${window.settings.shellArgs || ''}"></td>
+                        <td><input type="text" id="settingsEditor-shellArgs" value="${window.settings.shellArgs || ""}"></td>
                     </tr>
                     <tr>
                         <td>cwd</td>
@@ -680,7 +708,7 @@ window.openSettings = async () => {
                     <tr>
                         <td>audioVolume</td>
                         <td>Set default volume for sound effects (0.0 - 1.0)</td>
-                        <td><input type="number" id="settingsEditor-audioVolume" value="${window.settings.audioVolume || '1.0'}"></td>
+                        <td><input type="number" id="settingsEditor-audioVolume" value="${window.settings.audioVolume || "1.0"}"></td>
                     </tr>
                     <tr>
                         <td>disableFeedbackAudio</td>
@@ -711,7 +739,7 @@ window.openSettings = async () => {
                         <td>monitor</td>
                         <td>Which monitor to spawn the UI in (defaults to primary display)</td>
                         <td><select id="settingsEditor-monitor">
-                            ${(typeof window.settings.monitor !== "undefined") ? "<option>"+window.settings.monitor+"</option>" : ""}
+                            ${(typeof window.settings.monitor !== "undefined") ? "<option>" + window.settings.monitor + "</option>" : ""}
                             ${monitors}
                         </select></td>
                     </tr>
@@ -751,8 +779,8 @@ window.openSettings = async () => {
                         <td>keepGeometry</td>
                         <td>Try to keep a 16:9 aspect ratio in windowed mode</td>
                         <td><select id="settingsEditor-keepGeometry">
-                            <option>${(window.settings.keepGeometry === false) ? 'false' : 'true'}</option>
-                            <option>${(window.settings.keepGeometry === false) ? 'true' : 'false'}</option>
+                            <option>${(window.settings.keepGeometry === false) ? "false" : "true"}</option>
+                            <option>${(window.settings.keepGeometry === false) ? "true" : "false"}</option>
                         </select></td>
                     </tr>
                     <tr>
@@ -799,10 +827,10 @@ window.openSettings = async () => {
                 <h6 id="settingsEditorStatus">Loaded values from memory</h6>
                 <br>`,
         buttons: [
-            {label: "Open in External Editor", action:`electron.shell.openPath('${settingsFile}');electronWin.minimize();`},
-            {label: "Save to Disk", action: "window.writeSettingsFile()"},
-            {label: "Reload UI", action: "window.location.reload(true);"},
-            {label: "Restart eDEX", action: "electron.remote.app.relaunch();electron.remote.app.quit();"}
+            { label: "Open in External Editor", action: `electron.shell.openPath('${settingsFile}');electronWin.minimize();` },
+            { label: "Save to Disk", action: "window.writeSettingsFile()" },
+            { label: "Reload UI", action: "window.location.reload(true);" },
+            { label: "Restart eDEX", action: "electron.remote.app.relaunch();electron.remote.app.quit();" }
         ]
     }, () => {
         // Link the keyboard back to the terminal
@@ -856,11 +884,11 @@ window.writeSettingsFile = () => {
     });
 
     fs.writeFileSync(settingsFile, JSON.stringify(window.settings, "", 4));
-    document.getElementById("settingsEditorStatus").innerText = "New values written to settings.json file at "+new Date().toTimeString();
+    document.getElementById("settingsEditorStatus").innerText = "New values written to settings.json file at " + new Date().toTimeString();
 };
 
 window.toggleFullScreen = () => {
-    let useFullscreen = (electronWin.isFullScreen() ? false : true);
+    const useFullscreen = (electronWin.isFullScreen() ? false : true);
     electronWin.setFullScreen(useFullscreen);
 
     //Update settings
@@ -871,7 +899,9 @@ window.toggleFullScreen = () => {
 
 // Display available keyboard shortcuts and custom shortcuts helper
 window.openShortcutsHelp = () => {
-    if (document.getElementById("settingsEditor")) return;
+    if (document.getElementById("settingsEditor")) {
+        return;
+    }
 
     const shortcutsDefinition = {
         "COPY": "Copy selected buffer from the terminal.",
@@ -891,10 +921,10 @@ window.openShortcutsHelp = () => {
 
     let appList = "";
     window.shortcuts.filter(e => e.type === "app").forEach(cut => {
-        let action = (cut.action.startsWith("TAB_")) ? "TAB_X" : cut.action;
+        const action = (cut.action.startsWith("TAB_")) ? "TAB_X" : cut.action;
 
         appList += `<tr>
-                        <td>${(cut.enabled) ? 'YES' : 'NO'}</td>
+                        <td>${(cut.enabled) ? "YES" : "NO"}</td>
                         <td><input disabled type="text" maxlength=25 value="${cut.trigger}"></td>
                         <td>${shortcutsDefinition[action]}</td>
                     </tr>`;
@@ -903,11 +933,11 @@ window.openShortcutsHelp = () => {
     let customList = "";
     window.shortcuts.filter(e => e.type === "shell").forEach(cut => {
         customList += `<tr>
-                            <td>${(cut.enabled) ? 'YES' : 'NO'}</td>
+                            <td>${(cut.enabled) ? "YES" : "NO"}</td>
                             <td><input disabled type="text" maxlength=25 value="${cut.trigger}"></td>
                             <td>
                                 <input disabled type="text" placeholder="Run terminal command..." value="${cut.action}">
-                                <input disabled type="checkbox" name="shortcutsHelpNew_Enter" ${(cut.linebreak) ? 'checked' : ''}>
+                                <input disabled type="checkbox" name="shortcutsHelpNew_Enter" ${(cut.linebreak) ? "checked" : ""}>
                                 <label for="shortcutsHelpNew_Enter">Enter</label>
                             </td>
                         </tr>`;
@@ -943,28 +973,28 @@ window.openShortcutsHelp = () => {
                 </details>
                 <br>`,
         buttons: [
-            {label: "Open Shortcuts File", action:`electron.shell.openPath('${shortcutsFile}');electronWin.minimize();`},
-            {label: "Reload UI", action: "window.location.reload(true);"},
+            { label: "Open Shortcuts File", action: `electron.shell.openPath('${shortcutsFile}');electronWin.minimize();` },
+            { label: "Reload UI", action: "window.location.reload(true);" }
         ]
     }, () => {
         window.keyboard.attach();
         window.term[window.currentTerm].term.focus();
     });
 
-    let wrap1 = document.getElementById('shortcutsHelpAccordeon1');
-    let wrap2 = document.getElementById('shortcutsHelpAccordeon2');
+    const wrap1 = document.getElementById("shortcutsHelpAccordeon1");
+    const wrap2 = document.getElementById("shortcutsHelpAccordeon2");
 
-    wrap1.addEventListener('toggle', e => {
+    wrap1.addEventListener("toggle", e => {
         wrap2.open = !wrap1.open;
     });
 
-    wrap2.addEventListener('toggle', e => {
+    wrap2.addEventListener("toggle", e => {
         wrap1.open = !wrap2.open;
     });
 };
 
 window.useAppShortcut = action => {
-    switch(action) {
+    switch (action) {
         case "COPY":
             window.term[window.currentTerm].clipboard.copy();
             return true;
@@ -972,31 +1002,31 @@ window.useAppShortcut = action => {
             window.term[window.currentTerm].clipboard.paste();
             return true;
         case "NEXT_TAB":
-                if (window.term[window.currentTerm+1]) {
-                    window.focusShellTab(window.currentTerm+1);
-                } else if (window.term[window.currentTerm+2]) {
-                    window.focusShellTab(window.currentTerm+2);
-                } else if (window.term[window.currentTerm+3]) {
-                    window.focusShellTab(window.currentTerm+3);
-                } else if (window.term[window.currentTerm+4]) {
-                    window.focusShellTab(window.currentTerm+4);
-                } else {
-                    window.focusShellTab(0);
-                }
+            if (window.term[window.currentTerm + 1]) {
+                window.focusShellTab(window.currentTerm + 1);
+            } else if (window.term[window.currentTerm + 2]) {
+                window.focusShellTab(window.currentTerm + 2);
+            } else if (window.term[window.currentTerm + 3]) {
+                window.focusShellTab(window.currentTerm + 3);
+            } else if (window.term[window.currentTerm + 4]) {
+                window.focusShellTab(window.currentTerm + 4);
+            } else {
+                window.focusShellTab(0);
+            }
             return true;
         case "PREVIOUS_TAB":
-                let i = window.currentTerm || 4;
-                if (window.term[i] && i !== window.currentTerm) {
-                    window.focusShellTab(i);
-                } else if (window.term[i-1]) {
-                    window.focusShellTab(i-1);
-                } else if (window.term[i-2]) {
-                    window.focusShellTab(i-2);
-                } else if (window.term[i-3]) {
-                    window.focusShellTab(i-3);
-                } else if (window.term[i-4]) {
-                    window.focusShellTab(i-4);
-                }
+            const i = window.currentTerm || 4;
+            if (window.term[i] && i !== window.currentTerm) {
+                window.focusShellTab(i);
+            } else if (window.term[i - 1]) {
+                window.focusShellTab(i - 1);
+            } else if (window.term[i - 2]) {
+                window.focusShellTab(i - 2);
+            } else if (window.term[i - 3]) {
+                window.focusShellTab(i - 3);
+            } else if (window.term[i - 4]) {
+                window.focusShellTab(i - 4);
+            }
             return true;
         case "TAB_1":
             window.focusShellTab(0);
@@ -1049,13 +1079,17 @@ globalShortcut.unregisterAll();
 
 window.registerKeyboardShortcuts = () => {
     window.shortcuts.forEach(cut => {
-        if (!cut.enabled) return;
+        if (!cut.enabled) {
+            return;
+        }
 
         if (cut.type === "app") {
             if (cut.action === "TAB_X") {
                 for (let i = 1; i <= 5; i++) {
-                    let trigger = cut.trigger.replace("X", i);
-                    let dfn = () => { window.useAppShortcut(`TAB_${i}`) };
+                    const trigger = cut.trigger.replace("X", i);
+                    const dfn = () => {
+                        window.useAppShortcut(`TAB_${i}`);
+                    };
                     globalShortcut.register(trigger, dfn);
                 }
             } else {
@@ -1065,7 +1099,7 @@ window.registerKeyboardShortcuts = () => {
             }
         } else if (cut.type === "shell") {
             globalShortcut.register(cut.trigger, () => {
-                let fn = (cut.linebreak) ? "writelr" : "write";
+                const fn = (cut.linebreak) ? "writelr" : "write";
                 window.term[window.currentTerm][fn](cut.action);
             });
         } else {
@@ -1124,20 +1158,24 @@ window.onresize = () => {
 
 // See #413
 window.resizeTimeout = null;
-let electronWin = electron.remote.getCurrentWindow();
+const electronWin = electron.remote.getCurrentWindow();
 electronWin.on("resize", () => {
-    if (settings.keepGeometry === false) return;
+    if (settings.keepGeometry === false) {
+        return;
+    }
     clearTimeout(window.resizeTimeout);
     window.resizeTimeout = setTimeout(() => {
-        let win = electron.remote.getCurrentWindow();
-        if (win.isFullScreen()) return false;
+        const win = electron.remote.getCurrentWindow();
+        if (win.isFullScreen()) {
+            return false;
+        }
         if (win.isMaximized()) {
             win.unmaximize();
             win.setFullScreen(true);
             return false;
         }
 
-        let size = win.getSize();
+        const size = win.getSize();
 
         if (size[0] >= size[1]) {
             win.setSize(size[0], parseInt(size[0] * 9 / 16));

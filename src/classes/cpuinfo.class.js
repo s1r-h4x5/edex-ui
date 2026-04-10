@@ -1,6 +1,8 @@
 class Cpuinfo {
     constructor(parentId) {
-        if (!parentId) throw "Missing parameters";
+        if (!parentId) {
+            throw "Missing parameters";
+        }
 
         // Create initial DOM
         this.parent = document.getElementById(parentId);
@@ -9,20 +11,20 @@ class Cpuinfo {
         this.container = document.getElementById("mod_cpuinfo");
 
         // Init Smoothie
-        let TimeSeries = require("smoothie").TimeSeries;
-        let SmoothieChart = require("smoothie").SmoothieChart;
+        const TimeSeries = require("smoothie").TimeSeries;
+        const SmoothieChart = require("smoothie").SmoothieChart;
 
         this.series = [];
         this.charts = [];
         window.si.cpu().then(data => {
-            let divide = Math.floor(data.cores/2);
+            const divide = Math.floor(data.cores / 2);
             this.divide = divide;
 
-            let cpuName = data.manufacturer+data.brand;
+            let cpuName = data.manufacturer + data.brand;
             cpuName = cpuName.substr(0, 30);
             cpuName.substr(0, Math.min(cpuName.length, cpuName.lastIndexOf(" ")));
 
-            let innercontainer = document.createElement("div");
+            const innercontainer = document.createElement("div");
             innercontainer.setAttribute("id", "mod_cpuinfo_innercontainer");
             innercontainer.innerHTML = `<h1>CPU USAGE<i>${cpuName}</i></h1>
                 <div>
@@ -31,7 +33,7 @@ class Cpuinfo {
                     <canvas id="mod_cpuinfo_canvas_0" height="60"></canvas>
                 </div>
                 <div>
-                    <h1># <em>${divide+1}</em> - <em>${data.cores}</em><br>
+                    <h1># <em>${divide + 1}</em> - <em>${data.cores}</em><br>
                     <i id="mod_cpuinfo_usagecounter1">Avg. --%</i></h1>
                     <canvas id="mod_cpuinfo_canvas_1" height="60"></canvas>
                 </div>
@@ -60,17 +62,17 @@ class Cpuinfo {
                     limitFPS: 30,
                     responsive: true,
                     millisPerPixel: 50,
-                    grid:{
-                        fillStyle:'transparent',
-                        strokeStyle:'transparent',
-                        verticalSections:0,
-                        borderVisible:false
+                    grid: {
+                        fillStyle: "transparent",
+                        strokeStyle: "transparent",
+                        verticalSections: 0,
+                        borderVisible: false
                     },
-                    labels:{
+                    labels: {
                         disabled: true
                     },
                     yRangeFunction: () => {
-                        return {min:0,max:100};
+                        return { min: 0,max: 100 };
                     }
                 }));
             }
@@ -79,8 +81,8 @@ class Cpuinfo {
                 // Create TimeSeries
                 this.series.push(new TimeSeries());
 
-                let serie = this.series[i];
-                let options = {
+                const serie = this.series[i];
+                const options = {
                     lineWidth: 1.7,
                     strokeStyle: `rgb(${window.theme.r},${window.theme.g},${window.theme.b})`
                 };
@@ -99,7 +101,9 @@ class Cpuinfo {
             // Init updater
             this.updatingCPUload = false;
             this.updateCPUload();
-            if (process.platform !== "win32") {this.updateCPUtemp();}
+            if (process.platform !== "win32") {
+                this.updateCPUtemp();
+            }
             this.updatingCPUspeed = false;
             this.updateCPUspeed();
             this.updatingCPUtasks = false;
@@ -121,12 +125,16 @@ class Cpuinfo {
         });
     }
     updateCPUload() {
-        if (this.updatingCPUload) return;
+        if (this.updatingCPUload) {
+            return;
+        }
         this.updatingCPUload = true;
         window.si.currentLoad().then(data => {
-            let average = [[], []];
+            const average = [[], []];
 
-            if (!data.cpus) return; // Prevent memleak in rare case where systeminformation takes extra time to retrieve CPU info (see github issue #216)
+            if (!data.cpus) {
+                return;
+            } // Prevent memleak in rare case where systeminformation takes extra time to retrieve CPU info (see github issue #216)
 
             data.cpus.forEach((e, i) => {
                 this.series[i].append(new Date().getTime(), e.load);
@@ -138,11 +146,11 @@ class Cpuinfo {
                 }
             });
             average.forEach((stats, i) => {
-                average[i] = Math.round(stats.reduce((a, b) => a + b, 0)/stats.length);
+                average[i] = Math.round(stats.reduce((a, b) => a + b, 0) / stats.length);
 
                 try {
                     document.getElementById(`mod_cpuinfo_usagecounter${i}`).innerText = `Avg. ${average[i]}%`;
-                } catch(e) {
+                } catch (e) {
                     // Fail silently, DOM element is probably getting refreshed (new theme, etc)
                 }
             });
@@ -153,31 +161,35 @@ class Cpuinfo {
         window.si.cpuTemperature().then(data => {
             try {
                 document.getElementById("mod_cpuinfo_temp").innerText = `${data.max}°C`;
-            } catch(e) {
+            } catch (e) {
                 // See above notice
             }
         });
     }
     updateCPUspeed() {
-        if (this.updatingCPUspeed) return;
-        this.updatingCPUspeed = true
+        if (this.updatingCPUspeed) {
+            return;
+        }
+        this.updatingCPUspeed = true;
         window.si.cpu().then(data => {
             try {
                 document.getElementById("mod_cpuinfo_speed_min").innerText = `${data.speed}GHz`;
                 document.getElementById("mod_cpuinfo_speed_max").innerText = `${data.speedMax}GHz`;
-            } catch(e) {
+            } catch (e) {
                 // See above notice
             }
             this.updatingCPUspeed = false;
         });
     }
     updateCPUtasks() {
-        if (this.updatingCPUtasks) return;
+        if (this.updatingCPUtasks) {
+            return;
+        }
         this.updatingCPUtasks = true;
         window.si.processes().then(data => {
             try {
                 document.getElementById("mod_cpuinfo_tasks").innerText = `${data.all}`;
-            } catch(e) {
+            } catch (e) {
                 // See above notice
             }
             this.updatingCPUtasks = false;

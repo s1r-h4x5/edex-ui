@@ -1,6 +1,8 @@
 class Toplist {
     constructor(parentId) {
-        if (!parentId) throw "Missing parameters";
+        if (!parentId) {
+            throw "Missing parameters";
+        }
 
         // Create DOM
         this.parent = document.getElementById(parentId);
@@ -20,92 +22,94 @@ class Toplist {
         }, 2000);
     }
     updateList() {
-        if (this.currentlyUpdating) return;
+        if (this.currentlyUpdating) {
+            return;
+        }
 
         this.currentlyUpdating = true;
         window.si.processes().then(data => {
             if (window.settings.excludeThreadsFromToplist === true) {
                 data.list = data.list.sort((a, b) => {
-                    return (a.pid-b.pid);
+                    return (a.pid - b.pid);
                 }).filter((e, index, a) => {
-                    let i = a.findIndex(x => x.name === e.name);
+                    const i = a.findIndex(x => x.name === e.name);
                     if (i !== -1 && i !== index) {
-                        a[i].cpu = a[i].cpu+e.cpu;
-                        a[i].mem = a[i].mem+e.mem;
+                        a[i].cpu = a[i].cpu + e.cpu;
+                        a[i].mem = a[i].mem + e.mem;
                         return false;
                     }
                     return true;
                 });
             }
 
-            let list = data.list.sort((a, b) => {
-                return ((b.cpu-a.cpu)*100 + b.mem-a.mem);
+            const list = data.list.sort((a, b) => {
+                return ((b.cpu - a.cpu) * 100 + b.mem - a.mem);
             }).splice(0, 5);
 
             document.querySelectorAll("#mod_toplist_table > tr").forEach(el => {
                 el.remove();
             });
             list.forEach(proc => {
-                let el = document.createElement("tr");
+                const el = document.createElement("tr");
                 el.innerHTML = `<td>${proc.pid}</td>
                                 <td><strong>${proc.name}</strong></td>
-                                <td>${Math.round(proc.cpu*10)/10}%</td>
-                                <td>${Math.round(proc.mem*10)/10}%</td>`;
+                                <td>${Math.round(proc.cpu * 10) / 10}%</td>
+                                <td>${Math.round(proc.mem * 10) / 10}%</td>`;
                 document.getElementById("mod_toplist_table").append(el);
             });
             this.currentlyUpdating = false;
         });
     }
 
-    processList(){
+    processList() {
         let sortKey;
         let ascending = false;
         let removed = false;
         let currentlyUpdating = false;
 
-        function setSortKey(fieldName){
-            if (sortKey === fieldName){
-                if (ascending){
+        function setSortKey(fieldName) {
+            if (sortKey === fieldName) {
+                if (ascending) {
                     sortKey = undefined;
                     ascending = false;
-                }
-                else{
+                } else {
                     ascending = true;
                 }
-            }
-            else {
+            } else {
                 sortKey = fieldName;
                 ascending = false;
             }
         }
 
-        function formatRuntime(ms){
+        function formatRuntime(ms) {
             const msInDay = 24 * 60 * 60 * 1000;
-            let days = Math.floor(ms / msInDay);
+            const days = Math.floor(ms / msInDay);
             let remainingMS = ms % msInDay;
 
             const msInHour = 60 * 60 * 1000;
-            let hours = Math.floor(remainingMS / msInHour);
+            const hours = Math.floor(remainingMS / msInHour);
             remainingMS = ms % msInHour;
 
-            let msInMin = 60 * 1000;
-            let minutes = Math.floor(remainingMS / msInMin);
+            const msInMin = 60 * 1000;
+            const minutes = Math.floor(remainingMS / msInMin);
             remainingMS = ms % msInMin;
 
-            let seconds = Math.floor(remainingMS / 1000);
+            const seconds = Math.floor(remainingMS / 1000);
 
             return `${days < 10 ? "0" : ""}${days}:${hours < 10 ? "0" : ""}${hours}:${minutes < 10 ? "0" : ""}${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
         }
 
         function updateProcessList() {
-            if (currentlyUpdating) return;
+            if (currentlyUpdating) {
+                return;
+            }
             currentlyUpdating = true;
             window.si.processes().then(data => {
                 if (window.settings.excludeThreadsFromToplist === true) {
                     data.list = data.list.sort((a, b) => {
                         return (a.pid - b.pid);
                     }).filter((e, index, a) => {
-                        let i = a.findIndex(x => x.name === e.name);
+                        const i = a.findIndex(x => x.name === e.name);
                         if (i !== -1 && i !== index) {
                             a[i].cpu = a[i].cpu + e.cpu;
                             a[i].mem = a[i].mem + e.mem;
@@ -120,63 +124,97 @@ class Toplist {
                 });
 
                 currentlyUpdating = false;
-                let list = data.list.sort((a, b) => {
+                const list = data.list.sort((a, b) => {
                     switch (sortKey) {
                         case "PID":
-                            if (ascending) return a.pid - b.pid;
-                            else return b.pid - a.pid;
+                            if (ascending) {
+                                return a.pid - b.pid;
+                            } else {
+                                return b.pid - a.pid;
+                            }
                         case "Name":
                             if (ascending) {
-                                if (a.name > b.name) return -1;
-                                if (a.name < b.name) return 1;
+                                if (a.name > b.name) {
+                                    return -1;
+                                }
+                                if (a.name < b.name) {
+                                    return 1;
+                                }
                                 return 0;
-                            }
-                            else {
-                                if (a.name < b.name) return -1;
-                                if (a.name > b.name) return 1;
+                            } else {
+                                if (a.name < b.name) {
+                                    return -1;
+                                }
+                                if (a.name > b.name) {
+                                    return 1;
+                                }
                                 return 0;
                             }
                         case "User":
                             if (ascending) {
-                                if (a.user > b.user) return -1;
-                                if (a.user < b.user) return 1;
+                                if (a.user > b.user) {
+                                    return -1;
+                                }
+                                if (a.user < b.user) {
+                                    return 1;
+                                }
                                 return 0;
-                            }
-                            else {
-                                if (a.user < b.user) return -1;
-                                if (a.user > b.user) return 1;
+                            } else {
+                                if (a.user < b.user) {
+                                    return -1;
+                                }
+                                if (a.user > b.user) {
+                                    return 1;
+                                }
                                 return 0;
                             }
                         case "CPU":
-                            if (ascending) return a.cpu - b.cpu;
-                            else return b.cpu - a.cpu;
+                            if (ascending) {
+                                return a.cpu - b.cpu;
+                            } else {
+                                return b.cpu - a.cpu;
+                            }
                         case "Memory":
-                            if (ascending) return a.mem - b.mem;
-                            else return b.mem - a.mem;
+                            if (ascending) {
+                                return a.mem - b.mem;
+                            } else {
+                                return b.mem - a.mem;
+                            }
                         case "State":
-                            if (a.state < b.state) return -1;
-                            if (a.state > b.state) return 1;
+                            if (a.state < b.state) {
+                                return -1;
+                            }
+                            if (a.state > b.state) {
+                                return 1;
+                            }
                             return 0;
                         case "Started":
-                            if (ascending) return Date.parse(a.started) - Date.parse(b.started);
-                            else return Date.parse(b.started) - Date.parse(a.started);
+                            if (ascending) {
+                                return Date.parse(a.started) - Date.parse(b.started);
+                            } else {
+                                return Date.parse(b.started) - Date.parse(a.started);
+                            }
                         case "Runtime":
-                            if (ascending) return a.runtime - b.runtime;
-                            else return b.runtime - a.runtime;
+                            if (ascending) {
+                                return a.runtime - b.runtime;
+                            } else {
+                                return b.runtime - a.runtime;
+                            }
                         default:
                             // default to the same sorting as the toplist
                             return ((b.cpu - a.cpu) * 100 + b.mem - a.mem);
                     }
                 });
 
-                if (removed) clearInterval(updateInterval);
-                else {
+                if (removed) {
+                    clearInterval(updateInterval);
+                } else {
                     document.querySelectorAll("#processList > tr").forEach(el => {
                         el.remove();
                     });
 
                     list.forEach(proc => {
-                        let el = document.createElement("tr");
+                        const el = document.createElement("tr");
                         el.innerHTML = `<td class="pid">${proc.pid}</td>
                             <td class="name">${proc.name}</td>
                             <td class="user">${proc.user}</td>
@@ -212,7 +250,7 @@ class Toplist {
     </thead>
     <tbody id=\"processList\">
     </tbody>
-  </table>`,
+  </table>`
             },
             () => {
                 removed = true;
@@ -220,16 +258,16 @@ class Toplist {
             }
         );
 
-        let headers = document.getElementsByClassName("header");
-        for (let header of headers){
-            let title = header.textContent;
+        const headers = document.getElementsByClassName("header");
+        for (const header of headers) {
+            const title = header.textContent;
             header.addEventListener("click", () => {
-                for (let header of headers) {
-                    header.textContent = header.textContent.replace('\u25B2', "").replace('\u25BC', "");
+                for (const header of headers) {
+                    header.textContent = header.textContent.replace("\u25B2", "").replace("\u25BC", "");
                 }
                 setSortKey(title);
-                if (sortKey){
-                    header.textContent = `${title}${ascending ? '\u25B2' : '\u25BC'}`;
+                if (sortKey) {
+                    header.textContent = `${title}${ascending ? "\u25B2" : "\u25BC"}`;
                 }
             });
         }

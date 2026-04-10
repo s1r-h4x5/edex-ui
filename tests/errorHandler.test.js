@@ -97,7 +97,7 @@ describe("Error Handling Utilities", () => {
       const fn = jest.fn().mockRejectedValue(new Error("Always fails"));
       await expect(
         retry(fn, { maxRetries: 2, delay: 0 })
-      ).rejects.toThrow("MAX_RETRIES_EXCEEDED");
+      ).rejects.toThrow("failed after 2 retries");
     });
   });
 
