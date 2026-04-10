@@ -26,7 +26,11 @@
     "postbuild-linux": "rm -R prebuild-src",
     "postbuild-darwin": "rm -R prebuild-src",
     "postbuild-windows": "rmdir /S /Q prebuild-src",
-    "test": "rsync -a --info=progress2 src/ prebuild-src --exclude node_modules && node prebuild-minify.js && cd prebuild-src && npm install && snyk test && cd .. && rm -R prebuild-src",
+    "test": "jest",
+    "test:full": "rsync -a --info=progress2 src/ prebuild-src --exclude node_modules && node prebuild-minify.js && cd prebuild-src && npm install && npm run test && cd .. && rm -R prebuild-src",
+    "lint": "eslint src --ext .js",
+    "lint:fix": "eslint src --ext .js --fix",
+    "prepare": "husky install",
     "init-file-icons": "git submodule update --init",
     "update-file-icons": "git submodule foreach git pull origin master && node file-icons-generator.js"
   },
@@ -98,17 +102,26 @@
       "deleteAppDataOnUninstall": true
     }
   },
-  "dependencies": {
-    "clean-css": "5.2.1",
-    "electron": "^12.1.0",
-    "electron-builder": "^22.14.5",
-    "electron-rebuild": "^2.3.5",
-    "mime-types": "^2.1.33",
-    "node-abi": "2.30.1",
-    "node-json-minify": "1.0.0",
-    "terser": "^5.9.0"
+  "devDependencies": {
+    "clean-css": "^5.3.3",
+    "electron": "^25.9.8",
+    "electron-builder": "^24.6.4",
+    "electron-rebuild": "^3.1.5",
+    "eslint": "^8.54.0",
+    "eslint-config-standard": "^17.1.0",
+    "eslint-plugin-import": "^2.29.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^6.1.1",
+    "jest": "^29.7.0",
+    "husky": "^8.0.3",
+    "@commitlint/cli": "^17.7.2",
+    "@commitlint/config-conventional": "^17.7.0",
+    "mime-types": "^2.1.35",
+    "node-abi": "^3.49.0",
+    "node-json-minify": "^1.0.0",
+    "terser": "^5.26.0"
   },
   "optionalDependencies": {
-    "cson-parser": "4.0.9"
+    "cson-parser": "^4.0.9"
   }
 }

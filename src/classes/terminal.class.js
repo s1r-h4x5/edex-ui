@@ -1,4 +1,42 @@
+/**
+ * Terminal class for eDEX-UI
+ * Manages both client and server sides of terminal emulation using xterm.js
+ *
+ * @class Terminal
+ * @description Handles terminal creation, management, and communication
+ * Features:
+ * - xterm.js-based terminal emulation
+ * - WebGL rendering support
+ * - Custom color filters
+ * - CWD tracking via IPC
+ * - Multiplexing support
+ *
+ * @example
+ * // Client-side initialization
+ * const term = new Terminal({
+ *   role: "client",
+ *   parentId: "terminal-container",
+ *   port: 3000
+ * });
+ *
+ * @example
+ * // Server-side initialization
+ * const term = new Terminal({
+ *   role: "server",
+ *   port: 3000,
+ *   shell: "bash"
+ * });
+ */
 class Terminal {
+    /**
+     * Initialize terminal
+     * @param {object} opts - Terminal options
+     * @param {string} opts.role - "client" or "server"
+     * @param {string} opts.parentId - Parent HTML element ID (client only)
+     * @param {number} opts.port - WebSocket port (default: 3000)
+     * @param {string} opts.shell - Shell executable (server only)
+     * @throws {Error} Missing required options
+     */
     constructor(opts) {
         if (opts.role === "client") {
             if (!opts.parentId) throw "Missing options";

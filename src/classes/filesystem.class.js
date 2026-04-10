@@ -1,4 +1,29 @@
+/**
+ * Filesystem Display class for eDEX-UI
+ * Manages file browser display and navigation
+ *
+ * @class FilesystemDisplay
+ * @description Displays current directory contents with file icons and metadata
+ * Features:
+ * - Real-time directory tracking
+ * - File icon matching
+ * - Double-click to open/navigate
+ * - Context menu support
+ * - Size formatting
+ *
+ * @example
+ * const fs = new FilesystemDisplay({
+ *   parentId: "filesystem-container"
+ * });
+ * fs.setcwd("/home/user");
+ */
 class FilesystemDisplay {
+    /**
+     * Initialize filesystem display
+     * @param {object} opts - Options object
+     * @param {string} opts.parentId - Parent HTML element ID
+     * @throws {Error} Missing parentId option
+     */
     constructor(opts) {
         if (!opts.parentId) throw "Missing options";
 

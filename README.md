@@ -1,4 +1,7 @@
-<p align="center">
+npm ci && cd src && npm ci && cd ..
+npm run lint:fix
+npm test
+npm start<p align="center">
   <br>
   <img alt="Logo" src="media/logo.png">
   <br><br>
