@@ -1,0 +1,295 @@
+/**
+ * 3D Modules Styling for eDEX-UI
+ * Enhanced visuals for 3D rendering components
+ */
+
+/* Base 3D Module Container */
+.mod-3d {
+	background: rgba(0, 0, 0, 0.7);
+	border: 1px solid rgba(0, 255, 0, 0.3);
+	border-radius: 4px;
+	padding: 10px;
+	display: flex;
+	flex-direction: column;
+	box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
+}
+
+/* 3D Canvas Container */
+.canvas-3d-container {
+	width: 100%;
+	height: 100%;
+	position: relative;
+	border: 1px solid rgba(0, 255, 100, 0.2);
+	border-radius: 2px;
+	overflow: hidden;
+	background: linear-gradient(135deg, rgba(0, 0, 20, 0.9), rgba(0, 20, 40, 0.8));
+}
+
+.canvas-3d {
+	width: 100% !important;
+	height: 100% !important;
+	display: block;
+	background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.8), rgba(0, 10, 20, 0.9));
+}
+
+/* 3D System Info Module */
+.mod-3d-sysinfo {
+	border-color: rgba(0, 255, 100, 0.4);
+	box-shadow: 0 0 20px rgba(0, 255, 100, 0.15);
+}
+
+.3d-sysinfo-content {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 10px;
+	margin-top: 10px;
+	font-family: 'Courier New', monospace;
+	color: #00ff64;
+	text-shadow: 0 0 5px rgba(0, 255, 100, 0.5);
+	font-size: 12px;
+}
+
+.3d-sysinfo-section {
+	display: flex;
+	justify-content: space-between;
+	padding: 5px 8px;
+	background: rgba(0, 255, 100, 0.05);
+	border-left: 2px solid rgba(0, 255, 100, 0.3);
+	border-radius: 2px;
+	transition: all 0.3s ease;
+}
+
+.3d-sysinfo-section:hover {
+	background: rgba(0, 255, 100, 0.1);
+	border-left-color: rgba(0, 255, 100, 0.6);
+	box-shadow: inset 0 0 10px rgba(0, 255, 100, 0.1);
+}
+
+.3d-sysinfo-section .label {
+	font-weight: bold;
+	color: #00ff99;
+	margin-right: 10px;
+}
+
+.3d-sysinfo-section .value {
+	color: #00ff64;
+	word-break: break-word;
+}
+
+/* 3D CPU Info Module */
+.mod-3d-cpuinfo {
+	border-color: rgba(255, 165, 0, 0.4);
+	box-shadow: 0 0 20px rgba(255, 165, 0, 0.15);
+}
+
+.3d-title {
+	font-family: 'Courier New', monospace;
+	font-weight: bold;
+	color: #ffaa00;
+	text-shadow: 0 0 10px rgba(255, 165, 0, 0.6);
+	margin-bottom: 10px;
+	font-size: 14px;
+	text-transform: uppercase;
+	letter-spacing: 2px;
+}
+
+.3d-cpuinfo-content {
+	display: grid;
+	grid-template-columns: auto 1fr;
+	gap: 15px;
+	margin-top: 10px;
+	font-family: 'Courier New', monospace;
+	color: #ffaa00;
+	text-shadow: 0 0 5px rgba(255, 165, 0, 0.5);
+}
+
+.cpu-stats {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	margin-top: 10px;
+}
+
+.cpu-bar-item {
+	display: flex;
+	justify-content: space-between;
+	padding: 6px 10px;
+	background: rgba(255, 165, 0, 0.08);
+	border-left: 3px solid rgba(255, 165, 0, 0.4);
+	border-radius: 2px;
+	font-size: 12px;
+	transition: all 0.3s ease;
+}
+
+.cpu-bar-item:hover {
+	background: rgba(255, 165, 0, 0.12);
+	border-left-color: rgba(255, 165, 0, 0.8);
+}
+
+.cpu-bar-item .label {
+	color: #ffcc66;
+	font-weight: bold;
+	min-width: 80px;
+}
+
+.cpu-bar-item .value {
+	color: #ffaa00;
+	font-weight: bold;
+	min-width: 50px;
+	text-align: right;
+}
+
+.info-row {
+	display: flex;
+	justify-content: space-between;
+	padding: 8px 10px;
+	background: rgba(255, 165, 0, 0.06);
+	border-radius: 2px;
+	font-size: 12px;
+	border-left: 3px solid rgba(255, 165, 0, 0.3);
+}
+
+.info-row .label {
+	color: #ffcc66;
+	font-weight: bold;
+	margin-right: 20px;
+}
+
+.info-row .value {
+	color: #ffaa00;
+	font-weight: bold;
+}
+
+/* 3D RAM Watcher Module */
+.mod-3d-ramwatcher {
+	border-color: rgba(0, 255, 255, 0.4);
+	box-shadow: 0 0 20px rgba(0, 255, 255, 0.15);
+}
+
+.3d-ramwatcher-content {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	margin-top: 10px;
+	font-family: 'Courier New', monospace;
+	color: #00ffff;
+	text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+}
+
+.mod-3d-ramwatcher .info-row {
+	background: rgba(0, 255, 255, 0.06);
+	border-left-color: rgba(0, 255, 255, 0.3);
+}
+
+.mod-3d-ramwatcher .info-row .label {
+	color: #66ffff;
+}
+
+.mod-3d-ramwatcher .info-row .value {
+	color: #00ffff;
+}
+
+.mod-3d-ramwatcher .info-row:hover {
+	background: rgba(0, 255, 255, 0.12);
+	border-left-color: rgba(0, 255, 255, 0.8);
+}
+
+/* 3D Globe Module */
+.mod-3d-globe {
+	border-color: rgba(100, 200, 255, 0.4);
+	box-shadow: 0 0 20px rgba(100, 200, 255, 0.15);
+}
+
+.canvas-3d-glob,
+.canvas-3d-cpu,
+.canvas-3d-ram {
+	background: radial-gradient(ellipse at center, rgba(20, 40, 80, 0.9), rgba(0, 10, 30, 0.95)) !important;
+}
+
+/* Glowing Text Effects */
+.glow-text {
+	text-shadow: 0 0 5px currentColor, 0 0 10px currentColor, 0 0 15px currentColor;
+	letter-spacing: 1px;
+}
+
+/* 3D Interactive Elements */
+.3d-module-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 15px;
+	padding-bottom: 10px;
+	border-bottom: 1px solid rgba(0, 255, 100, 0.2);
+}
+
+.3d-module-title {
+	font-family: 'Courier New', monospace;
+	font-weight: bold;
+	font-size: 16px;
+	color: #00ff64;
+	text-shadow: 0 0 10px rgba(0, 255, 100, 0.6);
+	text-transform: uppercase;
+	letter-spacing: 3px;
+}
+
+.3d-module-status {
+	font-size: 10px;
+	color: #00aa44;
+	opacity: 0.7;
+	animation: pulse 2s infinite;
+}
+
+/* Animation effects */
+@keyframes pulse {
+	0%, 100% {
+		opacity: 0.7;
+	}
+	50% {
+		opacity: 1;
+	}
+}
+
+@keyframes glow-pulse {
+	0%, 100% {
+		text-shadow: 0 0 5px currentColor;
+	}
+	50% {
+		text-shadow: 0 0 15px currentColor, 0 0 20px currentColor;
+	}
+}
+
+/* Responsive design */
+@media (max-width: 1200px) {
+	.3d-sysinfo-content {
+		grid-template-columns: 1fr;
+	}
+
+	.3d-cpuinfo-content {
+		gap: 10px;
+	}
+}
+
+/* Canvas aspect ratio fixing */
+canvas {
+	max-width: 100%;
+	max-height: 100%;
+	display: block;
+	margin: 0 auto;
+}
+
+/* Fallback for non-WebGL browsers */
+.no-webgl {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 200px;
+	color: #ff0000;
+	text-shadow: 0 0 10px rgba(255, 0, 0, 0.6);
+	font-family: 'Courier New', monospace;
+	text-align: center;
+}
+
+.no-webgl p {
+	margin: 0;
+	font-size: 14px;
+}

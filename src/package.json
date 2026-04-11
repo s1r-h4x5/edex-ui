@@ -25,6 +25,7 @@
   "dependencies": {
     "@electron/remote": "^1.2.2",
     "augmented-ui": "^1.1.2",
+    "cannon-es": "^0.20.0",
     "color": "3.2.1",
     "geolite2-redist": "^2.0.4",
     "howler": "2.2.3",
@@ -39,6 +40,8 @@
     "smoothie": "1.35.0",
     "systeminformation": "5.9.7",
     "tail": "2.2.4",
+    "three": "^r128",
+    "three-addons": "^1.0.0",
     "username": "5.1.0",
     "which": "2.0.2",
     "ws": "7.5.5",
