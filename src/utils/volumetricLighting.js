@@ -13,7 +13,7 @@ class VolumetricLighting {
         
         this.volumetricLights = new Map();
         this.fogInstance = null;
-        this.god RayEffect = null;
+        this.godRayEffect = null;
         
         this.init();
     }
