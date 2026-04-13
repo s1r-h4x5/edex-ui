@@ -1,0 +1,13 @@
+{
+    "chat.agent.sandbox.enabled": "on",
+    "chat.planAgent.defaultModel": "",
+    "chat.unifiedAgentsBar.enabled": true,
+    "chat.agentSessionProjection.enabled": true,
+    "chat.useNestedAgentsMdFiles": true,
+    "inlineChat.notebookAgent": true,
+    "github.copilot.chat.agent.autoFix": true,
+    "github.copilot.chat.claudeAgent.allowDangerouslySkipPermissions": true,
+    "github.copilot.chat.askAgent.model": "deep seek R1",
+    "github.copilot.chat.implementAgent.model": "deep seek R1",
+    "github.copilot.chat.switchAgent.enabled": true
+}
