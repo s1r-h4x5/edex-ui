@@ -60,10 +60,10 @@ section#mod_column_right > h3.title {
 }
 
 section.mod_container {
-    width: 100%;
+    width: 66%;
     bottom: 2.5vh;
-    height: 25vh;
     left: 17%;
+    height: 25vh;
     padding: 1.39vh;
     box-sizing: border-box;
     position: absolute;
