@@ -363,6 +363,9 @@ async function initUI() {
     </section>
     <section class="mod_column" id="mod_column_right">
         <h3 class="title"><p>PANEL</p><p>NETWORK</p></h3>
+    </section>
+    <section class="mod_container" id="mod_container_nexus">
+        <h3 class="title"><p>ATHENA</p><p>NEXUS</p></h3>
     </section>`;
 
     await _delay(10);
@@ -443,15 +446,23 @@ async function initUI() {
     window.mods.globe = new LocationGlobe("mod_column_right");
     window.mods.conninfo = new Conninfo("mod_column_right");
 
+    // Athena Nexus Container Manager
+    window.mods.containerManager = new ContainerManager("mod_container_nexus");
+    window.mods.athenaRegistry = new AthenaRegistry("registry-tools");
+
     // Fade-in animations
     document.querySelectorAll(".mod_column").forEach(e => {
         e.setAttribute("class", "mod_column activated");
     });
+    document.querySelectorAll(".mod_container").forEach(e => {
+        e.setAttribute("class", "mod_container activated");
+    });
     let i = 0;
     const left = document.querySelectorAll("#mod_column_left > div");
     const right = document.querySelectorAll("#mod_column_right > div");
+    const container = document.querySelectorAll("#mod_container_nexus > div");
     const x = setInterval(() => {
-        if (!left[i] && !right[i]) {
+        if (!left[i] && !right[i] && !container[i]) {
             clearInterval(x);
         } else {
             window.audioManager.panels.play();
@@ -460,6 +471,9 @@ async function initUI() {
             }
             if (right[i]) {
                 right[i].setAttribute("style", "animation-play-state: running;");
+            }
+            if (container[i]) {
+                container[i].setAttribute("style", "animation-play-state: running;");
             }
             i++;
         }

@@ -58,3 +58,41 @@ section#mod_column_right {
 section#mod_column_right > h3.title {
     right: 0.555vh;
 }
+
+section.mod_container {
+    width: 100%;
+    bottom: 2.5vh;
+    height: 25vh;
+    left: 17%;
+    padding: 1.39vh;
+    box-sizing: border-box;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+
+    opacity: 0;
+    transition: opacity .5s cubic-bezier(0.4, 0, 1, 1);
+}
+
+section.mod_container.activated {
+    opacity: 1;
+}
+
+section.mod_container > h3.title {
+    top: 0.74vh;
+    width: auto;
+    left: 0.555vh;
+}
+
+section.mod_container > div {
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    animation-name: fadeIn;
+    animation-duration: .5s;
+    animation-timing-function: cubic-bezier(0.4, 0, 1, 1);
+    animation-delay: 0s;
+    animation-iteration-count: 1;
+    animation-fill-mode: forwards;
+    animation-play-state: paused;
+}
